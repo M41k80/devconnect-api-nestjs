@@ -2,6 +2,12 @@
 /dist
 /node_modules
 /build
+# PostgreSQL / local DB
+postgres/
+*.sqlite
+*.db
+
+
 
 .qodo
 
