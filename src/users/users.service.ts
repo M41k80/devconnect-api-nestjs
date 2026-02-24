@@ -22,4 +22,11 @@ export class UsersService {
       .where('user.email = :email', { email })
       .getOne();
   }
+
+  async findById(id: string) {
+    return this.userRepo
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id })
+      .getOne();
+  }
 }

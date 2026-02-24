@@ -7,10 +7,15 @@ import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register-auth.dto';
 import { LoginUserDto } from './dto/login-auth.dto';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from './interface/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async register(registerDto: RegisterDto) {
     const exists = await this.usersService.findByEmail(registerDto.email);
@@ -41,10 +46,41 @@ export class AuthService {
 
     if (!match) throw new UnauthorizedException('Invalid credentials');
 
+    const payload: JwtPayload = {
+      sub: user.id,
+      email: user.email,
+    };
+
+    const accessToken = this.jwtService.sign(payload);
+    const refreshToken = this.jwtService.sign(
+      { sub: user.id },
+      { expiresIn: '7d' },
+    );
+
     return {
       message: 'Login success',
+      accessToken,
+      refreshToken,
       userId: user.id,
       fullName: user.fullName,
     };
+  }
+
+  async verifyRefreshToken(refreshToken: string): Promise<JwtPayload> {
+    try {
+      return await this.jwtService.verifyAsync<JwtPayload>(refreshToken, {
+        secret: process.env.JWT_SECRET,
+      });
+    } catch {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+
+  generateAccessToken(user: JwtPayload) {
+    return this.jwtService.sign(user);
+  }
+
+  async getUserById(id: string) {
+    return await this.usersService.findById(id);
   }
 }
