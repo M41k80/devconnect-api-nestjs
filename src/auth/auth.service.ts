@@ -44,6 +44,7 @@ export class AuthService {
     return {
       message: 'Login success',
       userId: user.id,
+      fullName: user.fullName,
     };
   }
 }

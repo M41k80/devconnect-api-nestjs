@@ -18,7 +18,6 @@ export class AuthController {
   @ApiOperation({ summary: 'Login user' })
   @ApiBody({ type: LoginUserDto })
   @ApiResponse({ status: 200, description: 'Login Successful' })
-  @ApiResponse({ status: 401, description: 'Invalid Credentials' })
   login(@Body() loginUserDto: LoginUserDto) {
     return this.authService.login(loginUserDto);
   }

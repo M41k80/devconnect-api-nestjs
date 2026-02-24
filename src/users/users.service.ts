@@ -15,7 +15,11 @@ export class UsersService {
     return this.userRepo.save(user);
   }
 
-  findByEmail(email: string) {
-    return this.userRepo.findOne({ where: { email } });
+  async findByEmail(email: string) {
+    return this.userRepo
+      .createQueryBuilder('user')
+      .addSelect('user.password')
+      .where('user.email = :email', { email })
+      .getOne();
   }
 }
