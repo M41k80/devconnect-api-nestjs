@@ -1,0 +1,59 @@
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
+
+@Entity('users')
+export class User {
+  @ApiProperty({
+    example: '123e4567-e89b-12d3-a456-426614174000',
+    description: 'Unique identifier of the user',
+  })
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @ApiProperty({
+    example: 'john.doe@example.com',
+    description: 'Email of the user',
+  })
+  @Column('text', { unique: true, nullable: false })
+  email: string;
+
+  @ApiProperty({
+    example: 'StrongPassword123!',
+    description: 'Password of the user',
+    writeOnly: true,
+  })
+  @Column('text', { nullable: false, select: false })
+  password: string;
+
+  @ApiProperty({
+    example: 'John Doe',
+    description: 'Name of the user',
+  })
+  @Column('text', { nullable: false })
+  fullName: string;
+
+  @ApiProperty({
+    example: true,
+    description: 'Is the user active',
+  })
+  @Column('bool', { default: true })
+  isActive: boolean;
+
+  @ApiProperty({
+    example: '2023-07-01T00:00:00.000Z',
+  })
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @ApiProperty({
+    example: '2023-07-01T00:00:00.000Z',
+  })
+  @UpdateDateColumn()
+  updatedAt: Date;
+}
