@@ -4,8 +4,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { Follow } from '../../follows/entities/follow.entity';
 
 @Entity('users')
 export class User {
@@ -56,4 +58,10 @@ export class User {
   })
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Follow, (follow) => follow.follower)
+  following: Follow[];
+
+  @OneToMany(() => Follow, (follow) => follow.following)
+  follower: Follow[];
 }
