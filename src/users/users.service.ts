@@ -29,4 +29,11 @@ export class UsersService {
       .where('user.id = :id', { id })
       .getOne();
   }
+
+  findByIdWithRelations(id: string) {
+    return this.userRepo.findOne({
+      where: { id },
+      relations: ['following', 'follower'],
+    });
+  }
 }
