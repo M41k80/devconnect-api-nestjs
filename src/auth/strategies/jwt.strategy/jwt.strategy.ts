@@ -28,7 +28,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     console.log('Payload:', payload);
     const user = await this.usersService.findByIdWithRelations(payload.sub);
     console.log('User found:', user);
-    if (!user) throw new UnauthorizedException();
+    if (!user) throw new UnauthorizedException('User not found');
+    if (!user.isActive) throw new UnauthorizedException('User disabled');
     return user;
   }
 }

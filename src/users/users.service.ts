@@ -1,7 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { Role } from 'src/auth/enums/role.enum';
 
 @Injectable()
 export class UsersService {
@@ -35,5 +40,23 @@ export class UsersService {
       where: { id },
       relations: ['following', 'follower'],
     });
+  }
+
+  async deactivateUser(id: string) {
+    const user = await this.userRepo.findOneBy({ id });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.role === Role.ADMIN) {
+      throw new BadRequestException('Cannot deactivate admin');
+    }
+
+    user.isActive = false;
+
+    await this.userRepo.save(user);
+
+    return { message: 'User deactivated successfully' };
   }
 }
