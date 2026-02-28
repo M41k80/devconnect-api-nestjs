@@ -6,12 +6,17 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
 import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
 import { Req, UseGuards } from '@nestjs/common';
-import type { AuthRequest } from './interface/index';
+import type {
+  AuthRequest,
+  JwtPayload,
+  RequestWithCookies,
+} from './interface/index';
 import { UnauthorizedException } from '@nestjs/common';
 import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guards/roles/roles.guard';
 import { Role } from './enums/role.enum';
 import { UsersService } from 'src/users/users.service';
+import { JwtService } from '@nestjs/jwt';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -19,6 +24,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UsersService,
+    private readonly jwtService: JwtService,
   ) {}
 
   @Post('register')
@@ -57,39 +63,63 @@ export class AuthController {
   @Post('refresh')
   @ApiOperation({ summary: 'Refresh access token' })
   @ApiResponse({ status: 200, description: 'Access token refreshed' })
-  async refresh(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async refresh(@Req() req: Request) {
     const refreshToken = req.cookies['refreshToken'] as string | undefined;
 
+    //   if (!refreshToken) {
+    //     throw new UnauthorizedException('No refresh token found');
+    //   }
+
+    //   try {
+    //     const payload = await this.authService.verifyRefreshToken(refreshToken);
+
+    //     const user = await this.authService.getUserById(payload.sub);
+    //     if (!user) throw new UnauthorizedException('User not found');
+
+    //     const newAccessToken = this.authService.generateAccessToken({
+    //       sub: user.id,
+    //       email: user.email,
+    //       role: user.role,
+    //     });
+
+    //     res.cookie('token', newAccessToken, {
+    //       httpOnly: true,
+    //       secure: process.env.NODE_ENV === 'production',
+    //       sameSite: 'lax',
+    //       expires: new Date(Date.now() + 1000 * 60 * 30),
+    //     });
+
+    //     return { message: 'Access token refreshed' };
+    //   } catch {
+    //     throw new UnauthorizedException('Invalid refresh token');
+    //   }
+    // }
     if (!refreshToken) {
-      throw new UnauthorizedException('No refresh token found');
+      throw new UnauthorizedException('No refresh token');
     }
 
-    try {
-      const payload = await this.authService.verifyRefreshToken(refreshToken);
+    return this.authService.refresh(refreshToken);
+  }
 
-      const user = await this.authService.getUserById(payload.sub);
-      if (!user) throw new UnauthorizedException('User not found');
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  @ApiOperation({ summary: 'Logout user' })
+  @ApiResponse({ status: 200, description: 'User logged out successfully' })
+  async logout(
+    @Req() req: RequestWithCookies & { user: JwtPayload & { exp: number } },
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const token = req.cookies?.token;
 
-      const newAccessToken = this.authService.generateAccessToken({
-        sub: user.id,
-        email: user.email,
-        role: user.role,
-      });
-
-      res.cookie('token', newAccessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        expires: new Date(Date.now() + 1000 * 60 * 30),
-      });
-
-      return { message: 'Access token refreshed' };
-    } catch {
-      throw new UnauthorizedException('Invalid refresh token');
+    if (token) {
+      const { exp } = req.user;
+      await this.authService.add(token, new Date(exp * 1000));
     }
+
+    res.clearCookie('token');
+    res.clearCookie('refreshToken');
+
+    return { message: 'Logged out successfully' };
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

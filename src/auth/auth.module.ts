@@ -6,9 +6,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { RefreshToken, BlacklistedToken } from './entities';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([BlacklistedToken, RefreshToken]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     UsersModule,
     ConfigModule,
@@ -22,5 +25,6 @@ import { PassportModule } from '@nestjs/passport';
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
+  exports: [AuthService],
 })
 export class AuthModule {}

@@ -9,6 +9,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Follow } from '../../follows/entities/follow.entity';
 import { Role } from '../../auth/enums/role.enum';
+import { RefreshToken } from '../../auth/entities/index';
 
 @Entity('users')
 export class User {
@@ -75,4 +76,7 @@ export class User {
 
   @OneToMany(() => Follow, (follow) => follow.following)
   follower: Follow[];
+
+  @OneToMany(() => RefreshToken, (token) => token.user)
+  refreshTokens: RefreshToken[];
 }

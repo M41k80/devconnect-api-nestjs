@@ -9,12 +9,21 @@ import { RegisterDto } from './dto/register-auth.dto';
 import { LoginUserDto } from './dto/login-auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interface/jwt-payload.interface';
+import { InjectRepository } from '@nestjs/typeorm';
+import { BlacklistedToken } from './entities/blacklisted-token.entity';
+import { Repository } from 'typeorm';
+import { RefreshToken } from './entities';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    @InjectRepository(BlacklistedToken)
+    private repo: Repository<BlacklistedToken>,
+    @InjectRepository(RefreshToken)
+    private refreshRepo: Repository<RefreshToken>,
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -46,22 +55,13 @@ export class AuthService {
 
     if (!match) throw new UnauthorizedException('Invalid credentials');
 
-    const payload: JwtPayload = {
-      sub: user.id,
-      email: user.email,
-      role: user.role,
-    };
+    const tokens = await this.issueTokens(user);
 
-    const accessToken = this.jwtService.sign(payload);
-    const refreshToken = this.jwtService.sign(
-      { sub: user.id },
-      { expiresIn: '7d' },
-    );
+    await this.saveRefreshToken(user.id, tokens.refreshToken);
 
     return {
       message: 'Login success',
-      accessToken,
-      refreshToken,
+      ...tokens,
       userId: user.id,
       fullName: user.fullName,
     };
@@ -83,5 +83,91 @@ export class AuthService {
 
   async getUserById(id: string) {
     return await this.usersService.findById(id);
+  }
+
+  async add(token: string, expiresAt: Date) {
+    const record = this.repo.create({ token, expiresAt });
+    return this.repo.save(record);
+  }
+
+  async isBlacklisted(token: string): Promise<boolean> {
+    const exists = await this.repo.findOneBy({ token });
+    return !!exists;
+  }
+
+  async saveRefreshToken(userId: string, token: string) {
+    const hashed = await bcrypt.hash(token, 10);
+
+    const expireAt = new Date();
+    expireAt.setDate(expireAt.getDate() + 7);
+
+    const refresh = this.refreshRepo.create({
+      tokenHash: hashed,
+      user: { id: userId },
+      expiresAt: expireAt,
+    });
+
+    await this.refreshRepo.save(refresh);
+  }
+
+  async refresh(token: string) {
+    try {
+      const payload = this.jwtService.verify<JwtPayload>(token);
+
+      const user = await this.usersService.findById(payload.sub);
+
+      if (!user) throw new UnauthorizedException();
+
+      const savedTokens = await this.refreshRepo.find({
+        where: { user: { id: user.id } },
+      });
+
+      let validToken: RefreshToken | null = null;
+
+      for (const dbToken of savedTokens) {
+        const isValid = await bcrypt.compare(token, dbToken.tokenHash);
+        if (isValid) {
+          validToken = dbToken;
+          break;
+        }
+      }
+
+      if (!validToken) throw new UnauthorizedException();
+
+      await this.refreshRepo.remove(validToken);
+
+      const tokens = await this.issueTokens(user);
+      return {
+        message: 'Token refreshed',
+        ...tokens,
+        userId: user.id,
+      };
+    } catch {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+
+  private async issueTokens(user: User) {
+    const payload: JwtPayload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    };
+
+    const accessToken = this.jwtService.sign(payload, {
+      expiresIn: '30m',
+    });
+
+    const refreshToken = this.jwtService.sign(
+      { sub: user.id },
+      { expiresIn: '7d' },
+    );
+
+    await this.saveRefreshToken(user.id, refreshToken);
+
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 }
