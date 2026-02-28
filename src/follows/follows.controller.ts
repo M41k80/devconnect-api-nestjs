@@ -3,7 +3,7 @@ import { Post, Param, Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
 import type { AuthRequest } from 'src/auth/interface';
 import { FollowsService } from './follows.service';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/users/entities/user.entity';
 
 @ApiTags('Follows')
@@ -28,11 +28,24 @@ import { User } from 'src/users/entities/user.entity';
 export class FollowsController {
   constructor(private followsService: FollowsService) {}
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Follow a user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Followed user',
+    type: User,
+  })
   @Post(':id')
   follow(@Req() req: AuthRequest, @Param('id') id: string) {
     return this.followsService.followUser(req.user.sub, id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Unfollow a user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Unfollowed user',
+    type: User,
+  })
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   async unfollow(@Param('id') followingId: string, @Req() req: AuthRequest) {
@@ -41,12 +54,26 @@ export class FollowsController {
     return { message: 'Unfollowed successfully' };
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get followers of a user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Followers of a user',
+    type: User,
+  })
   @Get('/users/:id/followers')
   async getFollowers(@Param('id') userId: string) {
     const follower = await this.followsService.getFollowers(userId);
     return { follower };
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get following of a user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Following of a user',
+    type: User,
+  })
   @Get('/users/:id/following')
   async getFollowing(@Param('id') userId: string) {
     const following = await this.followsService.getFollowing(userId);
