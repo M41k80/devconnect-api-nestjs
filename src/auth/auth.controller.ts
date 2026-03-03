@@ -17,6 +17,7 @@ import { RolesGuard } from './guards/roles/roles.guard';
 import { Role } from './enums/role.enum';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -35,6 +36,7 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
 
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post('login')
   @ApiOperation({ summary: 'Login user' })
   @ApiBody({ type: LoginUserDto })
@@ -110,5 +112,14 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'User profile' })
   getProfile(@Req() req: AuthRequest) {
     return req.user;
+  }
+
+  @Get('users')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Get all users' })
+  @ApiResponse({ status: 200, description: 'List of all users' })
+  findAllUsers() {
+    return this.userService.findAll();
   }
 }
