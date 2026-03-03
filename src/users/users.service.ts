@@ -59,4 +59,8 @@ export class UsersService {
 
     return { message: 'User deactivated successfully' };
   }
+
+  async findAll(): Promise<User[]> {
+    return this.userRepo.find();
+  }
 }

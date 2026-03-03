@@ -17,6 +17,7 @@ import { RolesGuard } from './guards/roles/roles.guard';
 import { Role } from './enums/role.enum';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -35,6 +36,7 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
 
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post('login')
   @ApiOperation({ summary: 'Login user' })
   @ApiBody({ type: LoginUserDto })
@@ -66,34 +68,6 @@ export class AuthController {
   async refresh(@Req() req: Request) {
     const refreshToken = req.cookies['refreshToken'] as string | undefined;
 
-    //   if (!refreshToken) {
-    //     throw new UnauthorizedException('No refresh token found');
-    //   }
-
-    //   try {
-    //     const payload = await this.authService.verifyRefreshToken(refreshToken);
-
-    //     const user = await this.authService.getUserById(payload.sub);
-    //     if (!user) throw new UnauthorizedException('User not found');
-
-    //     const newAccessToken = this.authService.generateAccessToken({
-    //       sub: user.id,
-    //       email: user.email,
-    //       role: user.role,
-    //     });
-
-    //     res.cookie('token', newAccessToken, {
-    //       httpOnly: true,
-    //       secure: process.env.NODE_ENV === 'production',
-    //       sameSite: 'lax',
-    //       expires: new Date(Date.now() + 1000 * 60 * 30),
-    //     });
-
-    //     return { message: 'Access token refreshed' };
-    //   } catch {
-    //     throw new UnauthorizedException('Invalid refresh token');
-    //   }
-    // }
     if (!refreshToken) {
       throw new UnauthorizedException('No refresh token');
     }
@@ -114,6 +88,7 @@ export class AuthController {
     if (token) {
       const { exp } = req.user;
       await this.authService.add(token, new Date(exp * 1000));
+      await this.authService.revokeAllUserRefreshTokens(req.user.sub);
     }
 
     res.clearCookie('token');
@@ -137,5 +112,14 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'User profile' })
   getProfile(@Req() req: AuthRequest) {
     return req.user;
+  }
+
+  @Get('users')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Get all users' })
+  @ApiResponse({ status: 200, description: 'List of all users' })
+  findAllUsers() {
+    return this.userService.findAll();
   }
 }

@@ -28,12 +28,11 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   async validate(payload: JwtPayloadWithExp, req: RequestWithCookies) {
     const token = req.cookies?.token;
-    console.log('Payload:', payload);
+
     if (token && (await this.authservice.isBlacklisted(token))) {
       throw new UnauthorizedException('Token invalidated');
     }
     const user = await this.usersService.findByIdWithRelations(payload.sub);
-    console.log('User found:', user);
 
     if (!user || !user.isActive) {
       throw new UnauthorizedException();
