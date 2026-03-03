@@ -66,34 +66,6 @@ export class AuthController {
   async refresh(@Req() req: Request) {
     const refreshToken = req.cookies['refreshToken'] as string | undefined;
 
-    //   if (!refreshToken) {
-    //     throw new UnauthorizedException('No refresh token found');
-    //   }
-
-    //   try {
-    //     const payload = await this.authService.verifyRefreshToken(refreshToken);
-
-    //     const user = await this.authService.getUserById(payload.sub);
-    //     if (!user) throw new UnauthorizedException('User not found');
-
-    //     const newAccessToken = this.authService.generateAccessToken({
-    //       sub: user.id,
-    //       email: user.email,
-    //       role: user.role,
-    //     });
-
-    //     res.cookie('token', newAccessToken, {
-    //       httpOnly: true,
-    //       secure: process.env.NODE_ENV === 'production',
-    //       sameSite: 'lax',
-    //       expires: new Date(Date.now() + 1000 * 60 * 30),
-    //     });
-
-    //     return { message: 'Access token refreshed' };
-    //   } catch {
-    //     throw new UnauthorizedException('Invalid refresh token');
-    //   }
-    // }
     if (!refreshToken) {
       throw new UnauthorizedException('No refresh token');
     }
@@ -114,6 +86,7 @@ export class AuthController {
     if (token) {
       const { exp } = req.user;
       await this.authService.add(token, new Date(exp * 1000));
+      await this.authService.revokeAllUserRefreshTokens(req.user.sub);
     }
 
     res.clearCookie('token');

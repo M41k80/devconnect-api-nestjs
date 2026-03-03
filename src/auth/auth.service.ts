@@ -125,6 +125,8 @@ export class AuthService {
       let validToken: RefreshToken | null = null;
 
       for (const dbToken of savedTokens) {
+        if (dbToken.revoked) continue;
+        if (dbToken.expiresAt < new Date()) continue;
         const isValid = await bcrypt.compare(token, dbToken.tokenHash);
         if (isValid) {
           validToken = dbToken;
@@ -134,7 +136,12 @@ export class AuthService {
 
       if (!validToken) throw new UnauthorizedException();
 
-      await this.refreshRepo.remove(validToken);
+      if (validToken.expiresAt < new Date()) {
+        throw new UnauthorizedException();
+      }
+
+      validToken.revoked = true;
+      await this.refreshRepo.save(validToken);
 
       const tokens = await this.issueTokens(user);
       return {
@@ -169,5 +176,14 @@ export class AuthService {
       accessToken,
       refreshToken,
     };
+  }
+
+  async revokeAllUserRefreshTokens(userId: string) {
+    await this.refreshRepo
+      .createQueryBuilder()
+      .update()
+      .set({ revoked: true })
+      .where('userId = :userId', { userId })
+      .execute();
   }
 }
