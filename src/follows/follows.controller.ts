@@ -36,7 +36,7 @@ export class FollowsController {
   })
   @Post(':id')
   follow(@Req() req: AuthRequest, @Param('id') id: string) {
-    return this.followsService.followUser(req.user.sub, id);
+    return this.followsService.followUser(req.user.id, id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -49,7 +49,7 @@ export class FollowsController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   async unfollow(@Param('id') followingId: string, @Req() req: AuthRequest) {
-    const followerId = req.user.sub;
+    const followerId = req.user.id;
     await this.followsService.unfollow(followerId, followingId);
     return { message: 'Unfollowed successfully' };
   }
