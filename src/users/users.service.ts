@@ -60,7 +60,21 @@ export class UsersService {
     return { message: 'User deactivated successfully' };
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userRepo.find();
+  async updateUser(id: string, data: Partial<User>) {
+    const user = await this.userRepo.findOneBy({ id });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    Object.assign(user, data);
+
+    return this.userRepo.save(user);
+  }
+
+  async findAll() {
+    return this.userRepo.find({
+      order: { createdAt: 'DESC' },
+    });
   }
 }

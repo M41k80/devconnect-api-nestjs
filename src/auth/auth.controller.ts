@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Res } from '@nestjs/common';
+import { Body, Controller, Param, Patch, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register-auth.dto';
 import { LoginUserDto } from './dto/login-auth.dto';
@@ -6,11 +6,7 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
 import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
 import { Req, UseGuards } from '@nestjs/common';
-import type {
-  AuthRequest,
-  JwtPayload,
-  RequestWithCookies,
-} from './interface/index';
+import type { JwtPayload, RequestWithCookies } from './interface/index';
 import { UnauthorizedException } from '@nestjs/common';
 import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guards/roles/roles.guard';
@@ -106,20 +102,11 @@ export class AuthController {
     return this.userService.deactivateUser(id);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  @ApiOperation({ summary: 'Get user profile' })
-  @ApiResponse({ status: 200, description: 'User profile' })
-  getProfile(@Req() req: AuthRequest) {
-    return req.user;
-  }
-
-  @Get('users')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
-  @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({ status: 200, description: 'List of all users' })
-  findAllUsers() {
-    return this.userService.findAll();
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Get('profile')
+  // @ApiOperation({ summary: 'Get user profile' })
+  // @ApiResponse({ status: 200, description: 'User profile' })
+  // getProfile(@Req() req: AuthRequest) {
+  //   return req.user;
+  // }
 }
