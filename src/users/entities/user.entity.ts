@@ -52,6 +52,12 @@ export class User {
   @ApiProperty({
     example: '2023-07-01T00:00:00.000Z',
   })
+  @Column({ type: 'timestamp', nullable: true })
+  deletedAt?: Date | null;
+
+  @ApiProperty({
+    example: '2023-07-01T00:00:00.000Z',
+  })
   @CreateDateColumn()
   createdAt: Date;
 

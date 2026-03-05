@@ -99,14 +99,14 @@ export class AuthController {
   @ApiOperation({ summary: 'Delete user' })
   @ApiResponse({ status: 200, description: 'User deleted successfully' })
   deactivateUser(@Param('id') id: string) {
-    return this.userService.deactivateUser(id);
+    return this.userService.deactivateUserAdmin(id);
   }
 
-  // @UseGuards(JwtAuthGuard)
-  // @Get('profile')
-  // @ApiOperation({ summary: 'Get user profile' })
-  // @ApiResponse({ status: 200, description: 'User profile' })
-  // getProfile(@Req() req: AuthRequest) {
-  //   return req.user;
-  // }
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @Patch('admin/reactivate/:id')
+  @ApiOperation({ summary: 'Admin reactivates user account' })
+  reactivateByAdmin(@Param('id') id: string) {
+    return this.userService.reactivateUser(id);
+  }
 }
