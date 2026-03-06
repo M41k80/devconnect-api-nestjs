@@ -4,6 +4,7 @@ import {
   MaxLength,
   MinLength,
   Matches,
+  IsUUID,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -42,4 +43,11 @@ export class RegisterDto {
   @IsString()
   @MinLength(1)
   fullName: string;
+
+  @ApiProperty({
+    example: 'uuid-of-professional-role',
+    description: 'The user professional role id',
+  })
+  @IsUUID()
+  professionalRoleId: string;
 }

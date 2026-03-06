@@ -72,7 +72,7 @@ export class UsersService {
     }
 
     user.isActive = true;
-    user.deletedAt = null;
+    user.deletedAt = undefined;
 
     await this.userRepo.save(user);
 

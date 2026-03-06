@@ -9,6 +9,8 @@ import { UsersModule } from './users/users.module';
 import { FollowsModule } from './follows/follows.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { ProfessionalRolesModule } from './professional-roles/professional-roles.module';
+import { SkillsModule } from './skills/skills.module';
 
 @Module({
   imports: [
@@ -32,12 +34,16 @@ import { APP_GUARD } from '@nestjs/core';
     AuthModule,
     UsersModule,
     FollowsModule,
+    SkillsModule,
+    ProfessionalRolesModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
         limit: 30,
       },
     ]),
+    ProfessionalRolesModule,
+    SkillsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
