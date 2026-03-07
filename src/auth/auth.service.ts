@@ -11,9 +11,11 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interface/jwt-payload.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BlacklistedToken } from './entities/blacklisted-token.entity';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { RefreshToken } from './entities';
 import { User } from 'src/users/entities/user.entity';
+import { ProfessionalRole } from 'src/professional-roles/entities/professional-role.entity';
+import { Skill } from 'src/skills/entities/skill.entity';
 
 @Injectable()
 export class AuthService {
@@ -24,12 +26,34 @@ export class AuthService {
     private repo: Repository<BlacklistedToken>,
     @InjectRepository(RefreshToken)
     private refreshRepo: Repository<RefreshToken>,
+    @InjectRepository(ProfessionalRole)
+    private readonly professionalRoleRepo: Repository<ProfessionalRole>,
+    @InjectRepository(Skill)
+    private readonly skillRepo: Repository<Skill>,
   ) {}
 
   async register(registerDto: RegisterDto) {
     const exists = await this.usersService.findByEmail(registerDto.email);
 
-    if (exists) throw new BadRequestException('User already exists');
+    if (exists) {
+      throw new BadRequestException('User already exists');
+    }
+
+    const role = await this.professionalRoleRepo.findOne({
+      where: { id: registerDto.professionalRoleId },
+    });
+
+    if (!role) {
+      throw new BadRequestException('Invalid professional role');
+    }
+
+    const skills = await this.skillRepo.find({
+      where: { id: In(registerDto.skills || []) },
+    });
+
+    if (skills.length !== (registerDto.skills?.length || 0)) {
+      throw new BadRequestException('One or more skills are invalid');
+    }
 
     const hashed = await bcrypt.hash(registerDto.password, 10);
 
@@ -37,12 +61,15 @@ export class AuthService {
       email: registerDto.email,
       fullName: registerDto.fullName,
       password: hashed,
+      professionalRole: role,
+      skills: skills,
     });
 
     return {
       id: user.id,
       email: user.email,
       fullName: user.fullName,
+      professionalRole: role.name,
     };
   }
 

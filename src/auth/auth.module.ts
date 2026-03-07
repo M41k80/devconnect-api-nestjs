@@ -8,10 +8,17 @@ import { JwtStrategy } from './strategies/jwt.strategy/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RefreshToken, BlacklistedToken } from './entities';
+import { ProfessionalRole } from 'src/professional-roles/entities/professional-role.entity';
+import { Skill } from 'src/skills/entities/skill.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([BlacklistedToken, RefreshToken]),
+    TypeOrmModule.forFeature([
+      BlacklistedToken,
+      RefreshToken,
+      ProfessionalRole,
+      Skill,
+    ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     UsersModule,
     ConfigModule,
