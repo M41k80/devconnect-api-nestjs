@@ -5,6 +5,8 @@ import {
   MinLength,
   Matches,
   IsUUID,
+  IsArray,
+  IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -50,4 +52,13 @@ export class RegisterDto {
   })
   @IsUUID()
   professionalRoleId: string;
+
+  @ApiProperty({
+    example: '7c5a9e3b-d7a1-4d8a-b6d0-f5b1e7d1b0c1',
+    description: 'The user id',
+  })
+  @IsArray()
+  @IsUUID('4', { each: true })
+  @IsOptional()
+  skills?: string[];
 }

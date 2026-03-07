@@ -9,6 +9,7 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RefreshToken, BlacklistedToken } from './entities';
 import { ProfessionalRole } from 'src/professional-roles/entities/professional-role.entity';
+import { Skill } from 'src/skills/entities/skill.entity';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ProfessionalRole } from 'src/professional-roles/entities/professional-r
       BlacklistedToken,
       RefreshToken,
       ProfessionalRole,
+      Skill,
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     UsersModule,

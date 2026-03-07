@@ -11,6 +11,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ProfessionalRolesModule } from './professional-roles/professional-roles.module';
 import { SkillsModule } from './skills/skills.module';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { SkillsModule } from './skills/skills.module';
     FollowsModule,
     SkillsModule,
     ProfessionalRolesModule,
+    DatabaseModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
