@@ -12,6 +12,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ProfessionalRolesModule } from './professional-roles/professional-roles.module';
 import { SkillsModule } from './skills/skills.module';
 import { DatabaseModule } from './database/database.module';
+import { MetadataModule } from './metadata/metadata.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { DatabaseModule } from './database/database.module';
     SkillsModule,
     ProfessionalRolesModule,
     DatabaseModule,
+    MetadataModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
@@ -46,6 +48,7 @@ import { DatabaseModule } from './database/database.module';
     ]),
     ProfessionalRolesModule,
     SkillsModule,
+    MetadataModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
