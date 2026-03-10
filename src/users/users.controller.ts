@@ -51,15 +51,10 @@ export class UsersController {
     return req.user;
   }
 
-  @Patch('me')
-  @ApiOperation({ summary: 'Update user profile' })
-  @ApiResponse({
-    status: 200,
-    description: 'User profile updated successfully',
-  })
+  @Patch('updateProfile')
   @UseGuards(JwtAuthGuard)
-  updateMe(@Req() req: AuthRequest, @Body() dto: UpdateUserDto) {
-    return this.usersService.updateUser(req.user.id, dto);
+  updateProfile(@Req() req: AuthRequest, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateProfile(req.user.id, updateUserDto);
   }
 
   @Get(':id')

@@ -11,6 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { Role } from 'src/auth/enums/role.enum';
 import { PaginationQueryDto } from './dto/pagination-query.dto';
 import { ReactivateAccountDto } from './dto/reactivate-account.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -118,16 +119,18 @@ export class UsersService {
     };
   }
 
-  async updateUser(id: string, data: Partial<User>) {
-    const user = await this.userRepo.findOneBy({ id });
+  async updateProfile(userId: string, updateUserDto: UpdateUserDto) {
+    const user = await this.userRepo.findOne({
+      where: { id: userId },
+    });
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    Object.assign(user, data);
+    Object.assign(user, updateUserDto);
 
-    return this.userRepo.save(user);
+    return await this.userRepo.save(user);
   }
 
   async findAll() {

@@ -1,5 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, MinLength } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsOptional,
+  IsString,
+  IsUrl,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class UpdateUserDto {
   @ApiProperty({
@@ -12,4 +18,40 @@ export class UpdateUserDto {
   @IsString()
   @MinLength(2)
   fullName?: string;
+
+  @ApiProperty({
+    example: 'Backend Developer passionate about APIs',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(350)
+  bio?: string;
+
+  @ApiPropertyOptional({
+    example: 'https://github.com/johndoe',
+  })
+  @IsOptional()
+  @IsUrl()
+  github?: string;
+
+  @ApiPropertyOptional({
+    example: 'https://johndoe.dev',
+  })
+  @IsOptional()
+  @IsUrl()
+  portfolio?: string;
+
+  @ApiPropertyOptional({
+    example: 'https://linkedin.com/in/johndoe',
+  })
+  @IsOptional()
+  @IsUrl()
+  linkedin?: string;
+
+  @ApiPropertyOptional({
+    example: 'Madrid, Spain',
+  })
+  @IsOptional()
+  @IsString()
+  location?: string;
 }

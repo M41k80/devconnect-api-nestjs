@@ -71,6 +71,13 @@ export class User {
   bio: string;
 
   @ApiProperty({
+    example: 'Madrid, Spain',
+    description: 'Location of the user',
+  })
+  @Column({ nullable: true })
+  location: string;
+
+  @ApiProperty({
     example: 'John Doe',
     description: 'Name of the user',
   })
