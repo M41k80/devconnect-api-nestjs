@@ -17,6 +17,9 @@ import { Role } from '../../auth/enums/role.enum';
 import { RefreshToken } from '../../auth/entities/index';
 import { ProfessionalRole } from '../../professional-roles/entities/professional-role.entity';
 import { Skill } from '../../skills/entities/skill.entity';
+import { Project } from '../../projects/entities/project.entity';
+import { ProjectMember } from '../../projects/entities/project-member.entity';
+import { ProjectApplication } from '../../projects/entities/project-application.entity';
 
 @Entity('users')
 export class User {
@@ -138,4 +141,13 @@ export class User {
   @ManyToMany(() => Skill, (skill) => skill.users, { eager: true })
   @JoinTable({ name: 'user_skills' })
   skills: Skill[];
+
+  @OneToMany(() => Project, (project) => project.owner)
+  projectsOwned: Project[];
+
+  @OneToMany(() => ProjectMember, (member) => member.user)
+  projectMemberships: ProjectMember[];
+
+  @OneToMany(() => ProjectApplication, (app) => app.user)
+  applications: ProjectApplication[];
 }
