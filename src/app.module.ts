@@ -13,6 +13,7 @@ import { ProfessionalRolesModule } from './professional-roles/professional-roles
 import { SkillsModule } from './skills/skills.module';
 import { DatabaseModule } from './database/database.module';
 import { MetadataModule } from './metadata/metadata.module';
+import { ProjectsModule } from './projects/projects.module';
 
 @Module({
   imports: [
@@ -36,10 +37,7 @@ import { MetadataModule } from './metadata/metadata.module';
     AuthModule,
     UsersModule,
     FollowsModule,
-    SkillsModule,
-    ProfessionalRolesModule,
     DatabaseModule,
-    MetadataModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
@@ -49,6 +47,7 @@ import { MetadataModule } from './metadata/metadata.module';
     ProfessionalRolesModule,
     SkillsModule,
     MetadataModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
