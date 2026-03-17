@@ -77,6 +77,20 @@ export class Project {
   })
   status: ProjectStatus;
 
+  @ApiProperty({
+    example: true,
+    description: 'Whether the project is active or not',
+  })
+  @Column('bool', { default: true })
+  isActive: boolean;
+
+  @ApiProperty({
+    example: '2023-07-01T00:00:00.000Z',
+    description: 'Date when the project was deleted',
+  })
+  @Column({ type: 'timestamp', nullable: true })
+  deletedAt?: Date | null;
+
   @ManyToOne(() => User, (user) => user.projectsOwned)
   owner: User;
 

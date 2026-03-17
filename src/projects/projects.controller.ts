@@ -7,6 +7,8 @@ import {
   Query,
   Get,
   Param,
+  Patch,
+  Delete,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -21,6 +23,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth/jwt-auth.guard';
 import type { AuthRequest } from 'src/auth/interface';
 import { GetProjectsDto } from './dto/get-projects.dto';
 import { ApplyProjectDto } from './dto/apply-project.dto';
+import { UpdateProjectDto } from './dto/update-project.dto';
 @ApiTags('Projects')
 @ApiResponse({
   status: 201,
@@ -79,5 +82,72 @@ export class ProjectsController {
       projectId,
       applyProjectDto,
     );
+  }
+
+  @Get(':id/applications')
+  @ApiOperation({
+    summary: 'Get project applications',
+  })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  getProjectApplications(
+    @Param('id') projectId: string,
+    @Req() req: AuthRequest,
+  ) {
+    return this.projectsService.getProjectApplications(projectId, req.user.id);
+  }
+
+  @Patch('applications/:id/accept')
+  @ApiOperation({
+    summary: 'Accept application',
+  })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  acceptApplication(
+    @Param('id') applicationId: string,
+    @Req() req: AuthRequest,
+  ) {
+    return this.projectsService.acceptApplication(applicationId, req.user.id);
+  }
+
+  @Patch('applications/:id/reject')
+  @ApiOperation({
+    summary: 'Reject application',
+  })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  rejectApplication(
+    @Param('id') applicationId: string,
+    @Req() req: AuthRequest,
+  ) {
+    return this.projectsService.rejectApplication(applicationId, req.user.id);
+  }
+
+  @Patch(':id')
+  @ApiOperation({
+    summary: 'Update project',
+  })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  updateProject(
+    @Param('id') projectId: string,
+    @Req() req: AuthRequest,
+    @Body() updateProjectDto: UpdateProjectDto,
+  ) {
+    return this.projectsService.updateProject(
+      projectId,
+      req.user.id,
+      updateProjectDto,
+    );
+  }
+
+  @Delete(':id')
+  @ApiOperation({
+    summary: 'Delete project',
+  })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  deleteProject(@Param('id') projectId: string, @Req() req: AuthRequest) {
+    return this.projectsService.deleteProject(projectId, req.user.id);
   }
 }
