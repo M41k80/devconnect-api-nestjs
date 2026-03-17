@@ -17,6 +17,7 @@ import { ApplyProjectDto } from './dto/apply-project.dto';
 import { ProjectApplication } from './entities/project-application.entity';
 import { ApplicationStatus } from './enums/application-status.enum';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { ProjectResponseDto } from './dto/responses/project-response.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -34,7 +35,18 @@ export class ProjectsService {
     private projectApplicationRepo: Repository<ProjectApplication>,
   ) {}
 
-  async createProject(userId: string, createProjectDto: CreateProjectDto) {
+  private validateProjectOwner(project: Project, userId: string) {
+    if (project.owner.id !== userId) {
+      throw new ForbiddenException(
+        'Only the project owner can view applications',
+      );
+    }
+  }
+
+  async createProject(
+    userId: string,
+    createProjectDto: CreateProjectDto,
+  ): Promise<ProjectResponseDto> {
     const user = await this.userRepo.findOne({
       where: { id: userId },
     });
@@ -57,7 +69,16 @@ export class ProjectsService {
 
     await this.projectMemberRepo.save(member);
 
-    return project;
+    return {
+      id: project.id,
+      title: project.title,
+      description: project.description,
+      techStack: project.techStack,
+      owner: {
+        id: user.id,
+        fullName: user.fullName,
+      },
+    };
   }
 
   async getProjects(paginationQuery: GetProjectsDto) {
@@ -162,7 +183,12 @@ export class ProjectsService {
     return await this.projectApplicationRepo.save(application);
   }
 
-  async getProjectApplications(projectId: string, userId: string) {
+  async getProjectApplications(
+    projectId: string,
+    userId: string,
+    page: number = 1,
+    limit: number = 10,
+  ) {
     const project = await this.projectRepo.findOne({
       where: { id: projectId },
       relations: ['owner'],
@@ -172,23 +198,30 @@ export class ProjectsService {
       throw new NotFoundException('Project not found');
     }
 
-    if (project.owner.id !== userId) {
-      throw new ForbiddenException(
-        'Only the project owner can view applications',
-      );
-    }
+    this.validateProjectOwner(project, userId);
 
-    const applications = await this.projectApplicationRepo.find({
-      where: {
-        project: { id: projectId },
-      },
-      relations: ['user', 'user.professionalRole', 'user.skills'],
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+    limit = Math.min(limit, 50);
 
-    return applications;
+    const [applications, total] =
+      await this.projectApplicationRepo.findAndCount({
+        where: {
+          project: { id: projectId },
+        },
+        relations: ['user', 'user.professionalRole', 'user.skills'],
+        order: { createdAt: 'DESC' },
+        take: limit,
+        skip: (page - 1) * limit,
+      });
+
+    return {
+      data: applications,
+      meta: {
+        total,
+        page,
+        limit,
+        lastPage: Math.ceil(total / limit),
+      },
+    };
   }
 
   async acceptApplication(applicationId: string, userId: string) {
@@ -299,9 +332,7 @@ export class ProjectsService {
       throw new NotFoundException('Project not found');
     }
 
-    if (project.owner.id !== userId) {
-      throw new ForbiddenException('Only the owner can update the project');
-    }
+    this.validateProjectOwner(project, userId);
 
     Object.assign(project, updateProjectDto);
 
@@ -320,9 +351,7 @@ export class ProjectsService {
       throw new NotFoundException('Project not found');
     }
 
-    if (project.owner.id !== userId) {
-      throw new ForbiddenException('Only the owner can delete the project');
-    }
+    this.validateProjectOwner(project, userId);
 
     project.isActive = false;
     project.deletedAt = new Date();

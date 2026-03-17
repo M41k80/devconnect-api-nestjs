@@ -9,6 +9,7 @@ import {
   Param,
   Patch,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -24,6 +25,8 @@ import type { AuthRequest } from 'src/auth/interface';
 import { GetProjectsDto } from './dto/get-projects.dto';
 import { ApplyProjectDto } from './dto/apply-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { ProjectResponseDto } from './dto/responses/project-response.dto';
+import { PaginationDto } from './dto/pagination/pagination.dto';
 @ApiTags('Projects')
 @ApiResponse({
   status: 201,
@@ -40,13 +43,14 @@ export class ProjectsController {
   @ApiResponse({
     status: 201,
     description: 'Project created successfully',
+    type: ProjectResponseDto,
   })
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   createProject(
     @Req() req: AuthRequest,
     @Body() createProjectDto: CreateProjectDto,
-  ) {
+  ): Promise<ProjectResponseDto> {
     return this.projectsService.createProject(req.user.id, createProjectDto);
   }
 
@@ -92,9 +96,15 @@ export class ProjectsController {
   @ApiBearerAuth()
   getProjectApplications(
     @Param('id') projectId: string,
+    @Query() paginationQueryDto: PaginationDto,
     @Req() req: AuthRequest,
   ) {
-    return this.projectsService.getProjectApplications(projectId, req.user.id);
+    return this.projectsService.getProjectApplications(
+      projectId,
+      req.user.id,
+      paginationQueryDto.page,
+      paginationQueryDto.limit,
+    );
   }
 
   @Patch('applications/:id/accept')
