@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -14,6 +15,8 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { GetProjectsDto } from './dto/get-projects.dto';
 import { ApplyProjectDto } from './dto/apply-project.dto';
 import { ProjectApplication } from './entities/project-application.entity';
+import { ApplicationStatus } from './enums/application-status.enum';
+import { UpdateProjectDto } from './dto/update-project.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -64,6 +67,7 @@ export class ProjectsService {
     const qb = this.projectRepo
       .createQueryBuilder('project')
       .leftJoinAndSelect('project.owner', 'owner')
+      .where('project.isActive = true')
       .orderBy('project.createdAt', 'DESC');
 
     if (status) {
@@ -156,5 +160,177 @@ export class ProjectsService {
     });
 
     return await this.projectApplicationRepo.save(application);
+  }
+
+  async getProjectApplications(projectId: string, userId: string) {
+    const project = await this.projectRepo.findOne({
+      where: { id: projectId },
+      relations: ['owner'],
+    });
+
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+
+    if (project.owner.id !== userId) {
+      throw new ForbiddenException(
+        'Only the project owner can view applications',
+      );
+    }
+
+    const applications = await this.projectApplicationRepo.find({
+      where: {
+        project: { id: projectId },
+      },
+      relations: ['user', 'user.professionalRole', 'user.skills'],
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+
+    return applications;
+  }
+
+  async acceptApplication(applicationId: string, userId: string) {
+    const application = await this.projectApplicationRepo.findOne({
+      where: { id: applicationId },
+      relations: ['project', 'project.owner', 'user'],
+    });
+
+    if (!application) {
+      throw new NotFoundException('Application not found');
+    }
+
+    if (application.project.owner.id !== userId) {
+      throw new ForbiddenException(
+        'Only the project owner can accept applications',
+      );
+    }
+
+    if (application.status !== ApplicationStatus.PENDING) {
+      throw new BadRequestException('Application already processed');
+    }
+
+    const existingMember = await this.projectMemberRepo.findOne({
+      where: {
+        project: { id: application.project.id },
+        user: { id: application.user.id },
+      },
+    });
+
+    if (existingMember) {
+      throw new BadRequestException('User is already a project member');
+    }
+
+    const member = this.projectMemberRepo.create({
+      project: application.project,
+      user: application.user,
+    });
+
+    await this.projectMemberRepo.save(member);
+
+    application.status = ApplicationStatus.ACCEPTED;
+
+    await this.projectApplicationRepo.save(application);
+
+    return {
+      message: 'Application accepted',
+    };
+  }
+
+  async rejectApplication(applicationId: string, userId: string) {
+    const application = await this.projectApplicationRepo.findOne({
+      where: { id: applicationId },
+      relations: ['project', 'project.owner', 'user'],
+    });
+
+    if (!application) {
+      throw new NotFoundException('Application not found');
+    }
+
+    if (application.project.owner.id !== userId) {
+      throw new ForbiddenException(
+        'Only the project owner can accept applications',
+      );
+    }
+
+    if (application.status !== ApplicationStatus.PENDING) {
+      throw new BadRequestException('Application already processed');
+    }
+
+    const existingMember = await this.projectMemberRepo.findOne({
+      where: {
+        project: { id: application.project.id },
+        user: { id: application.user.id },
+      },
+    });
+
+    if (existingMember) {
+      throw new BadRequestException('User is already a project member');
+    }
+
+    const member = this.projectMemberRepo.create({
+      project: application.project,
+      user: application.user,
+    });
+
+    await this.projectMemberRepo.save(member);
+
+    application.status = ApplicationStatus.REJECTED;
+
+    await this.projectApplicationRepo.save(application);
+
+    return {
+      message: 'Application rejected',
+    };
+  }
+
+  async updateProject(
+    projectId: string,
+    userId: string,
+    updateProjectDto: UpdateProjectDto,
+  ) {
+    const project = await this.projectRepo.findOne({
+      where: { id: projectId },
+      relations: ['owner'],
+    });
+
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+
+    if (project.owner.id !== userId) {
+      throw new ForbiddenException('Only the owner can update the project');
+    }
+
+    Object.assign(project, updateProjectDto);
+
+    await this.projectRepo.save(project);
+
+    return project;
+  }
+
+  async deleteProject(projectId: string, userId: string) {
+    const project = await this.projectRepo.findOne({
+      where: { id: projectId },
+      relations: ['owner'],
+    });
+
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+
+    if (project.owner.id !== userId) {
+      throw new ForbiddenException('Only the owner can delete the project');
+    }
+
+    project.isActive = false;
+    project.deletedAt = new Date();
+
+    await this.projectRepo.save(project);
+
+    return {
+      message: 'Project archived successfully',
+    };
   }
 }
