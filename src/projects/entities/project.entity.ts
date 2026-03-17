@@ -6,6 +6,7 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  Index,
 } from 'typeorm';
 
 import { User } from '../../users/entities/user.entity';
@@ -70,6 +71,7 @@ export class Project {
     example: 'Idea',
     description: 'Status of the project',
   })
+  @Index()
   @Column({
     type: 'enum',
     enum: ProjectStatus,
@@ -81,6 +83,7 @@ export class Project {
     example: true,
     description: 'Whether the project is active or not',
   })
+  @Index()
   @Column('bool', { default: true })
   isActive: boolean;
 
@@ -104,6 +107,7 @@ export class Project {
     example: '2022-01-01T00:00:00.000Z',
     description: 'Date when the project was created',
   })
+  @Index()
   @CreateDateColumn()
   createdAt: Date;
 
