@@ -362,4 +362,119 @@ export class ProjectsService {
       message: 'Project archived successfully',
     };
   }
+
+  async getProjectMembers(projectId: string) {
+    const project = await this.projectRepo.findOne({
+      where: { id: projectId, isActive: true },
+    });
+
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+
+    const members = await this.projectMemberRepo.find({
+      where: { project: { id: projectId } },
+      relations: ['user', 'user.professionalRole', 'user.skills'],
+    });
+
+    return members.map((member) => ({
+      id: member.user.id,
+      fullName: member.user.fullName,
+      role: member.user.professionalRole?.name,
+      skills: member.user.skills?.map((s) => s.name),
+    }));
+  }
+
+  async getAppliedProjects(userId: string) {
+    const applications = await this.projectApplicationRepo.find({
+      where: {
+        user: { id: userId },
+      },
+      relations: ['project', 'project.owner'],
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+
+    return applications.map((app) => ({
+      applicationId: app.id,
+      status: app.status,
+      message: app.message,
+      project: {
+        id: app.project.id,
+        title: app.project.title,
+        status: app.project.status,
+        owner: {
+          id: app.project.owner.id,
+          fullName: app.project.owner.fullName,
+        },
+      },
+    }));
+  }
+
+  // TODO: basic version of discovery .. intelligent matching based, we can improve this later
+  async discoverProjects(userId: string) {
+    const user = await this.userRepo.findOne({
+      where: { id: userId },
+      relations: ['skills', 'professionalRole'],
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const userSkills = user.skills.map((s) => s.name.toLowerCase());
+
+    const qb = this.projectRepo
+      .createQueryBuilder('project')
+      .leftJoinAndSelect('project.owner', 'owner')
+      .where('project.isActive = true')
+      .orderBy('project.createdAt', 'DESC');
+
+    const projects = await qb.getMany();
+
+    // simple scoring system
+    const scored = projects.map((project) => {
+      let score = 0;
+
+      const techStack = project.techStack.map((t) => t.toLowerCase());
+
+      // match by skills
+      techStack.forEach((tech) => {
+        if (userSkills.includes(tech)) {
+          score += 2;
+        }
+      });
+
+      // match by role 
+      if (
+        user.professionalRole &&
+        project.description
+          .toLowerCase()
+          .includes(user.professionalRole.name.toLowerCase())
+      ) {
+        score += 1;
+      }
+
+      return {
+        ...project,
+        score,
+      };
+    });
+
+    // order by revelance
+    scored.sort((a, b) => b.score - a.score);
+
+    return scored.slice(0, 20).map((project) => ({
+      id: project.id,
+      title: project.title,
+      description: project.description,
+      techStack: project.techStack,
+      score: project.score,
+      owner: {
+        id: project.owner.id,
+        fullName: project.owner.fullName,
+      },
+    }));
+  }
 }
