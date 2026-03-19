@@ -160,4 +160,30 @@ export class ProjectsController {
   deleteProject(@Param('id') projectId: string, @Req() req: AuthRequest) {
     return this.projectsService.deleteProject(projectId, req.user.id);
   }
+
+  @Get(':id/members')
+  @ApiOperation({
+    summary: 'Get project members',
+  })
+  getProjectMembers(@Param('id') projectId: string) {
+    return this.projectsService.getProjectMembers(projectId);
+  }
+
+  @Get('applied')
+  @ApiOperation({
+    summary: 'Get applied projects',
+  })
+  @UseGuards(JwtAuthGuard)
+  getAppliedProjects(@Req() req: AuthRequest) {
+    return this.projectsService.getAppliedProjects(req.user.id);
+  }
+
+  @Get('discover')
+  @ApiOperation({
+    summary: 'Discover projects',
+  })
+  @UseGuards(JwtAuthGuard)
+  getDiscoverProjects(@Req() req: AuthRequest) {
+    return this.projectsService.discoverProjects(req.user.id);
+  }
 }
