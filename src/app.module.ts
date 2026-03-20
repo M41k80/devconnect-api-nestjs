@@ -32,6 +32,10 @@ import { ProjectsModule } from './projects/projects.module';
 
         autoLoadEntities: true,
         synchronize: false,
+
+        ssl: {
+          rejectUnauthorized: false,
+        },
       }),
     }),
     AuthModule,
