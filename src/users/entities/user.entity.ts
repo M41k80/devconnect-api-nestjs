@@ -88,6 +88,13 @@ export class User {
   fullName: string;
 
   @ApiProperty({
+    example: '122019903435485',
+    description: 'Image Url of the user',
+  })
+  @Column({ nullable: true })
+  profileImageUrl?: string;
+
+  @ApiProperty({
     example: true,
     description: 'Is the user active',
   })

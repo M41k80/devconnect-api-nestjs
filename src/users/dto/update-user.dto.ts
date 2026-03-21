@@ -54,4 +54,11 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   location?: string;
+
+  @ApiPropertyOptional({
+    example: 'https://avatars.githubusercontent.com/u/123456789?v=4',
+  })
+  @IsOptional()
+  @IsString()
+  profileImageUrl?: string;
 }
