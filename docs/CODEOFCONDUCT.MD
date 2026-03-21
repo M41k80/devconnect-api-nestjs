@@ -2,9 +2,9 @@
 
 ## Our Pledge
 
-DevConnect exists to connect IT professional. For that to work, we need a community where every person — regardless of experience level, background, or identity — feels safe to participate, ask questions, share ideas, and grow.
+DevConnect exists to connect IT professional. For that to work, we need a community where every person regardless of experience level, background, or identity — feels safe to participate, ask questions, share ideas, and grow.
 
-We as contributors, maintainers, and community members pledge to make participation in DevConnect a harassment-free experience for everyone. We commit to treating all people with dignity and respect, and to building a space where the best ideas win, not the loudest voices.
+We as contributors, maintainers, and community members pledge to make participation in DevConnect a harassment free experience for everyone. We commit to treating all people with dignity and respect, and to building a space where the best ideas win, not the loudest voices.
 
 -----
 
@@ -80,7 +80,7 @@ Responses will be proportional to the severity and context of the violation:
 
 #### 1. Correction
 
-**Applies to:** Minor violations — an unintentionally offensive comment, a lapse in tone, or a first-time infraction.
+**Applies to:** Minor violations — an unintentionally offensive comment, a lapse in tone, or a first time infraction.
 
 **Action:** A private written note from a maintainer explaining why the behavior was problematic and what a more appropriate response would have looked like. No public record.
 
@@ -104,7 +104,7 @@ Responses will be proportional to the severity and context of the violation:
 
 #### 4. Permanent Ban
 
-**Applies to:** Severe violations — harassment, threats, doxxing, discrimination, sustained predatory behavior, or repeated serious violations.
+**Applies to:** Severe violations harassment, threats, doxxing, discrimination, sustained predatory behavior, or repeated serious violations.
 
 **Action:** Permanent removal from all DevConnect community spaces. This decision is final and not subject to appeal in most cases.
 
@@ -118,7 +118,7 @@ If you believe an enforcement decision was made in error, you may appeal by emai
 
 ## Attribution
 
-This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org), version 2.1, which is widely adopted across open-source projects. We’ve adapted the language and enforcement guidelines to fit our community’s needs and values.
+This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org), version 2.1, which is widely adopted across open source projects. We’ve adapted the language and enforcement guidelines to fit our community’s needs and values.
 
 For answers to common questions about the Contributor Covenant, see the [FAQ](https://www.contributor-covenant.org/faq). Translations are available at [contributor-covenant.org/translations](https://www.contributor-covenant.org/translations).
 
