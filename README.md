@@ -5,16 +5,10 @@
 
 ## Apóyame / Buy Me a Coffee
 
-Si te gusta este proyecto, considera apoyarme:
+Si te gusta este proyecto, considera apoyarme:  
 If you like this project, consider supporting me:
 
-<div>
-  <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" 
-  data-name="bmc-button" data-slug="m41k80" data-color="#FFDD00" 
-  data-font="Cookie" data-text="Buy me a coffee" 
-  data-outline-color="#000000" data-font-color="#000000" 
-  data-coffee-color="#ffffff"></script>
-</div>
+[![Buy Me a Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/m41k80)
 
 
 # DevConnect API
