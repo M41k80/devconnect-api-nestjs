@@ -31,7 +31,7 @@ Mantener y escalar una plataforma gratuita requiere tiempo y recursos. Si este p
 ¿Eres una empresa? Conviértete en Sponsor para destacar tu marca ante una comunidad creciente de desarrolladores y profesionales del sector.
 
 
-DevConnect was born with a clear mission: connecting IT talent with real-world open-source projects. Every line of code, from the solid backend to the UI, has been built with dedication to empower our community.
+DevConnect was born with a clear mission: connecting IT talent with real world open source projects. Every line of code, from the solid backend to the UI, has been built with dedication to empower our community.
 Running and scaling a free platform takes time and resources. If this project has provided value to you, helped you find collaborators, or you simply believe in our vision, please consider supporting us.
 Are you a company? Become a Sponsor to showcase your brand to a growing community of developers and tech professionals.
 
@@ -828,14 +828,14 @@ Your contributions and sponsorships help us reach these milestones faster!
 
 - [ ] **Real-time Notifications:** Socket.io integration for application updates and new followers  
 - [ ] **Project Search 2.0:** Advanced filtering by multiple tech stacks and location  
-- [ ] **GitHub Integration:** Auto-sync profile data and public repositories via GitHub API  
+- [ ] **GitHub Integration:** Auto sync profile data and public repositories via GitHub API  
 - [ ] **Markdown Support:** Enable rich descriptions for project READMEs within the platform  
 
 ---
 
 ### 🟠 Phase 3: Ecosystem & Scale (Future)
 
-- [ ] **DevConnect CLI:** A command-line tool to interact with the API directly from the terminal  
+- [ ] **DevConnect CLI:** A command line tool to interact with the API directly from the terminal  
 - [ ] **Messaging System:** Private encrypted chats between project members  
 - [ ] **Organization Accounts:** Support for tech communities and open-source organizations  
 - [ ] **In-App Analytics:** Track project views and application conversion rates  
@@ -851,7 +851,7 @@ Your contributions and sponsorships help us reach these milestones faster!
 
 ## License
 
-This project is open-source and available under the [MIT License](LICENSE).
+This project is open source and available under the [MIT License](LICENSE).
 
 -----
 
