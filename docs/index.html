@@ -1,0 +1,2083 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevConnect API — Documentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #111118;
+            --surface2: #1a1a24;
+            --border: #1e1e2e;
+            --accent: #7c3aed;
+            --accent2: #06b6d4;
+            --accent3: #10b981;
+            --accent-warn: #f59e0b;
+            --accent-danger: #ef4444;
+            --text: #e4e4f0;
+            --text-muted: #6b6b8a;
+            --text-dim: #3d3d52;
+            --tag-get: #065f46;
+            --tag-get-text: #34d399;
+            --tag-post: #1e3a5f;
+            --tag-post-text: #60a5fa;
+            --tag-patch: #451a03;
+            --tag-patch-text: #fbbf24;
+            --tag-delete: #450a0a;
+            --tag-delete-text: #f87171;
+            --radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(–bg);
+            color: var(–text);
+            font-family: ‘Syne’, sans-serif;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ─── SIDEBAR ─────────────────────────────────── */
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background: var(–surface);
+            border-right: 1px solid var(–border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-logo {
+            padding: 28px 24px 20px;
+            border-bottom: 1px solid var(–border);
+        }
+
+        .logo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(–accent), var(–accent2));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(–text);
+        }
+
+        .logo-version {
+            font-family: ‘JetBrains Mono’, monospace;
+            font-size: 10px;
+            color: var(–text-muted);
+            display: block;
+            margin-top: 2px;
+        }
+
+        .sidebar-nav {
+            padding: 16px 0;
+            flex: 1;
+        }
+
+        .nav-section-title {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(–text-dim);
+            padding: 12px 24px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 24px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(–text-muted);
+            text-decoration: none;
+            transition: all 0.15s;
+            border-left: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: var(–text);
+            background: rgba(124, 58, 237, 0.08);
+            border-left-color: var(–accent);
+        }
+
+        .nav-item .nav-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(–text-dim);
+            flex-shrink: 0;
+        }
+
+        .nav-item.active .nav-dot {
+            background: var(–accent);
+        }
+
+        /* ─── MAIN ─────────────────────────────────────── */
+        .main {
+            margin-left: 260px;
+            flex: 1;
+            max-width: 960px;
+            padding: 0 48px 80px;
+        }
+
+        /* ─── HERO ─────────────────────────────────────── */
+        .hero {
+            padding: 72px 0 56px;
+            border-bottom: 1px solid var(–border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: ‘’;
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(124, 58, 237, 0.15);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            border-radius: 100px;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #a78bfa;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+            background: linear-gradient(135deg, #fff 40%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+
+        .hero-sub {
+            font-size: 17px;
+            color: var(–text-muted);
+            line-height: 1.6;
+            max-width: 520px;
+            margin-bottom: 32px;
+        }
+
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(–surface2);
+            border: 1px solid var(–border);
+            border-radius: 6px;
+            padding: 5px 12px;
+            font-family: ‘JetBrains Mono’, monospace;
+            font-size: 11px;
+            color: var(–text-muted);
+            transition: all 0.15s;
+        }
+
+        .badge:hover {
+            border-color: var(–accent);
+            color: var(–text);
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        /* ─── SECTIONS ─────────────────────────────────── */
+        .section {
+            padding-top: 56px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        h2 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 28px 0 12px;
+            color: var(–text);
+        }
+
+        .section-divider {
+            height: 1px;
+            background: var(–border);
+            margin: 16px 0 28px;
+        }
+
+        p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(–text-muted);
+        }
+
+        /* ─── CARDS ────────────────────────────────────── */
+        .card {
+            background: var(–surface);
+            border: 1px solid var(–border);
+            border-radius: var(–radius);
+            padding: 20px 24px;
+            margin-bottom: 12px;
+            transition: border-color 0.2s;
+        }
+
+        .card:hover {
+            border-color: rgba(124, 58, 237, 0.4);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .feature-card {
+            background: var(–surface);
+            border: 1px solid var(–border);
+            border-radius: var(–radius);
+            padding: 18px 20px;
+            transition: border-color 0.2s;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(6, 182, 212, 0.3);
+        }
+
+        .feature-emoji {
+            font-size: 22px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .feature-desc {
+            font-size: 12px;
+            color: var(–text-muted);
+            line-height: 1.5;
+        }
+
+        /* ─── ENDPOINT TABLE ────────────────────────────── */
+        .endpoint-group {
+            margin-top: 32px;
+        }
+
+        .group-title {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(–text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .group-title::after {
+            content: ‘’;
+            flex: 1;
+            height: 1px;
+            background: var(–border);
+        }
+
+        .endpoint {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 18px;
+            background: var(–surface);
+            border: 1px solid var(–border);
+            border-radius: var(–radius);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .endpoint:hover {
+            border-color: rgba(124, 58, 237, 0.35);
+        }
+
+        .method-tag {
+            font-family: ‘JetBrains Mono’, monospace;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            min-width: 52px;
+            text-align: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+            letter-spacing: 0.05em;
+        }
+
+        .method-get {
+            background: var(–tag-get);
+            color: var(–tag-get-text);
+        }
+
+        .method-post {
+            background: var(–tag-post);
+            color: var(–tag-post-text);
+        }
+
+        .method-patch {
+            background: var(–tag-patch);
+            color: var(–tag-patch-text);
+        }
+
+        .method-delete {
+            background: var(–tag-delete);
+            color: var(–tag-delete-text);
+        }
+
+        .endpoint-path {
+            font-family: ‘JetBrains Mono’, monospace;
+            font-size: 13px;
+            color: var(–text);
+            flex: 1;
+        }
+
+        .endpoint-desc {
+            font-size: 12px;
+            color: var(–text-muted);
+            margin-top: 3px;
+        }
+
+        .auth-badge {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 4px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .auth-jwt {
+            background: rgba(124, 58, 237, 0.15);
+            color: #a78bfa;
+            border: 1px solid rgba(124, 58, 237, 0.3);
+        }
+
+        .auth-admin {
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .auth-pub {
+            background: rgba(107, 107, 138, 0.1);
+            color: var(–text-dim);
+            border: 1px solid var(–border);
+        }
+
+        /* ─── CODE BLOCKS ───────────────────────────────── */
+        .code-block {
+            background: #0d0d14;
+            border: 1px solid var(–border);
+            border-radius: var(–radius);
+            padding: 16px 20px;
+            font-family: ‘JetBrains Mono’, monospace;
+            font-size: 12px;
+            line-height: 1.7;
+            overflow-x: auto;
+            position: relative;
+            margin: 12px 0;
+        }
+
+        .code-label {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            font-size: 10px;
+            color: var(–text-dim);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .s {
+            color: #a5f3fc;
+        }
+
+        /* string */
+        .k {
+            color: #c084fc;
+        }
+
+        /* key */
+        .n {
+            color: #86efac;
+        }
+
+        /* number */
+        .c {
+            color: #70a8c9;
+            font-style: italic;
+        }
+
+        /* comment */
+        .b {
+            color: #fbbf24;
+        }
+
+        /* boolean */
+
+        /* ─── TABLES ────────────────────────────────────── */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 13px;
+        }
+
+        th {
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(–text-muted);
+            padding: 10px 14px;
+            border-bottom: 1px solid var(–border);
+        }
+
+        td {
+            padding: 10px 14px;
+            color: var(–text-muted);
+            border-bottom: 1px solid rgba(30, 30, 46, 0.5);
+            font-size: 13px;
+            vertical-align: top;
+        }
+
+        td code,
+        th code {
+            font-family: ‘JetBrains Mono’, monospace;
+            font-size: 11px;
+            background: var(–surface2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(–accent2);
+        }
+
+        tr:hover td {
+            background: rgba(124, 58, 237, 0.04);
+        }
+
+        /* ─── TOKEN TABLE ───────────────────────────────── */
+        .token-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .token-card {
+            background: var(–surface);
+            border: 1px solid var(–border);
+            border-radius: var(–radius);
+            padding: 16px;
+        }
+
+        .token-type {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(–accent2);
+            margin-bottom: 8px;
+        }
+
+        .token-val {
+            font-family: ‘JetBrains Mono’, monospace;
+            font-size: 11px;
+            color: var(–text);
+        }
+
+        .token-label {
+            font-size: 11px;
+            color: var(–text-muted);
+            margin-top: 4px;
+        }
+
+        /* ─── FLOW DIAGRAM ──────────────────────────────── */
+        .flow-diagram {
+            background: var(–surface);
+            border: 1px solid var(–border);
+            border-radius: var(–radius);
+            padding: 28px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flow-diagram::before {
+            content: ‘’;
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 80% 0%, rgba(124, 58, 237, 0.06), transparent 60%);
+            pointer-events: none;
+        }
+
+        .flow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            position: relative;
+        }
+
+        .flow-step {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .flow-line {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .flow-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(–accent), var(–accent2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .flow-connector {
+            width: 2px;
+            flex: 1;
+            min-height: 24px;
+            background: var(–border);
+            margin: 4px 0;
+        }
+
+        .flow-content {
+            padding: 4px 0 24px;
+            flex: 1;
+        }
+
+        .flow-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(–text);
+            margin-bottom: 4px;
+        }
+
+        .flow-desc {
+            font-size: 12px;
+            color: var(–text-muted);
+            line-height: 1.5;
+        }
+
+        /* ─── ENV TABLE ─────────────────────────────────── */
+        .env-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(–surface);
+            border: 1px solid var(–border);
+            border-radius: var(–radius);
+            margin-bottom: 6px;
+        }
+
+        .env-key {
+            font-family: ‘JetBrains Mono’, monospace;
+            font-size: 12px;
+            color: var(–accent2);
+            min-width: 140px;
+            flex-shrink: 0;
+        }
+
+        .env-desc {
+            font-size: 12px;
+            color: var(–text-muted);
+            flex: 1;
+        }
+
+        .env-default {
+            font-family: ‘JetBrains Mono’, monospace;
+            font-size: 11px;
+            color: var(–accent3);
+        }
+
+        /* ─── SCRIPTS ───────────────────────────────────── */
+        .script-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 16px 0;
+        }
+
+        .script-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            background: var(–surface);
+            border: 1px solid var(–border);
+            border-radius: var(–radius);
+            padding: 12px 16px;
+        }
+
+        .script-cmd {
+            font-family: ‘JetBrains Mono’, monospace;
+            font-size: 12px;
+            color: var(–accent3);
+        }
+
+        .script-label {
+            font-size: 11px;
+            color: var(–text-muted);
+        }
+
+        /* ─── STATUS BADGES ─────────────────────────────── */
+        .status-grid {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+
+        .status-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-family: ‘JetBrains Mono’, monospace;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .chip-arrow {
+            font-size: 10px;
+            color: var(–text-dim);
+        }
+
+        /* ─── SCROLLBAR ─────────────────────────────────── */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(–border);
+            border-radius: 4px;
+        }
+
+        /* ─── ANIMATIONS ─────────────────────────────────── */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            animation: fadeUp 0.4s ease both;
+        }
+
+        /* ─── RESPONSIVE ────────────────────────────────── */
+        @media (max-width: 900px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .token-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .script-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-badge">
+                <div class="logo-icon">⚡</div>
+                <div>
+                    <div class="logo-text">DevConnect</div>
+                    <span class="logo-version">REST API · v1.0</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section-title">Overview</div>
+            <a href="#overview" class="nav-item active"><span class="nav-dot"></span>Introduction</a>
+            <a href="#features" class="nav-item"><span class="nav-dot"></span>Features</a>
+            <a href="#tech-stack" class="nav-item"><span class="nav-dot"></span>Tech Stack</a>
+
+            
+            <div class="nav-section-title">Setup</div>
+            <a href="#getting-started" class="nav-item"><span class="nav-dot"></span>Getting Started</a>
+            <a href="#environment" class="nav-item"><span class="nav-dot"></span>Environment Variables</a>
+            <a href="#database" class="nav-item"><span class="nav-dot"></span>Database</a>
+
+            <div class="nav-section-title">Architecture</div>
+            <a href="#architecture" class="nav-item"><span class="nav-dot"></span>Module Structure</a>
+            <a href="#auth-flow" class="nav-item"><span class="nav-dot"></span>Auth Flow</a>
+
+            <div class="nav-section-title">API Reference</div>
+            <a href="#auth-endpoints" class="nav-item"><span class="nav-dot"></span>Auth</a>
+            <a href="#users-endpoints" class="nav-item"><span class="nav-dot"></span>Users</a>
+            <a href="#projects-endpoints" class="nav-item"><span class="nav-dot"></span>Projects</a>
+            <a href="#follows-endpoints" class="nav-item"><span class="nav-dot"></span>Follows</a>
+            <a href="#skills-endpoints" class="nav-item"><span class="nav-dot"></span>Skills</a>
+            <a href="#roles-endpoints" class="nav-item"><span class="nav-dot"></span>Professional Roles</a>
+            <a href="#metadata-endpoints" class="nav-item"><span class="nav-dot"></span>Metadata</a>
+
+            <div class="nav-section-title">Other</div>
+            <a href="#security" class="nav-item"><span class="nav-dot"></span>Security</a>
+            <a href="#testing" class="nav-item"><span class="nav-dot"></span>Testing</a>
+            <a href="#scripts" class="nav-item"><span class="nav-dot"></span>Scripts</a>
+            <a href="#contributing" class="nav-item"><span class="nav-dot"></span>Contributing</a>
+            
+
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <!-- HERO -->
+
+        <section class="hero" id="overview">
+            <div class="hero-tag">⚡ Open Source · REST API</div>
+            <h1>DevConnect<br />API Docs</h1>
+            <p class="hero-sub">A production-grade REST API built with NestJS for connecting developers to collaborate
+                on real-world open source projects.</p>
+            <div class="hero-badges">
+                <div class="badge">
+                    <div class="badge-dot" style="background:#E0234E"></div>NestJS 11
+                </div>
+                <div class="badge">
+                    <div class="badge-dot" style="background:#3178C6"></div>TypeScript 5
+                </div>
+                <div class="badge">
+                    <div class="badge-dot" style="background:#336791"></div>PostgreSQL 14
+                </div>
+                <div class="badge">
+                    <div class="badge-dot" style="background:#FE0803"></div>TypeORM
+                </div>
+                <div class="badge">
+                    <div class="badge-dot" style="background:#000"></div>JWT Auth
+                </div>
+                <div class="badge">
+                    <div class="badge-dot" style="background:#2496ED"></div>Docker
+                </div>
+                <div class="badge">
+                    <div class="badge-dot" style="background:#85EA2D"></div>Swagger
+                </div>
+            </div>
+        </section>
+
+        <!-- FEATURES -->
+
+        <section class="section" id="features">
+            <div class="section-header">
+                <div class="section-icon" style="background:rgba(124,58,237,0.15)">✦</div>
+                <h2>Features</h2>
+            </div>
+            <div class="section-divider"></div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="feature-emoji">🔐</span>
+                    <div class="feature-title">JWT Authentication</div>
+                    <div class="feature-desc">Stateless access tokens (30min) + HttpOnly refresh tokens (7 days) with
+                        rotation and blacklisting on logout.</div>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-emoji">🛡️</span>
+                    <div class="feature-title">Role-Based Access Control</div>
+                    <div class="feature-desc">USER and ADMIN roles with NestJS Guards protecting sensitive routes and
+                        admin operations.</div>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-emoji">🚀</span>
+                    <div class="feature-title">Project Management</div>
+                    <div class="feature-desc">Full project lifecycle from idea to launch, with application system,
+                        member management, and soft-delete archiving.</div>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-emoji">🔍</span>
+                    <div class="feature-title">Project Discovery</div>
+                    <div class="feature-desc">Skill-based intelligent matching that scores projects by relevance to the
+                        user's tech stack and professional role.</div>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-emoji">👥</span>
+                    <div class="feature-title">Social Following</div>
+                    <div class="feature-desc">Follow/unfollow developers, view followers and following lists for
+                        building a developer community network.</div>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-emoji">📦</span>
+                    <div class="feature-title">Unified Response Format</div>
+                    <div class="feature-desc">Global response interceptor and exception filter for consistent envelope
+                        format across all endpoints.</div>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-emoji">🚦</span>
+                    <div class="feature-title">Rate Limiting</div>
+                    <div class="feature-desc">Throttler protection on sensitive endpoints. Login rate-limited to 10
+                        requests/minute per IP.</div>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-emoji">📖</span>
+                    <div class="feature-title">Swagger UI</div>
+                    <div class="feature-desc">Auto-generated interactive OpenAPI 3 documentation available at /api when
+                        running the server.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TECH STACK -->
+
+        <section class="section" id="tech-stack">
+            <div class="section-header">
+                <div class="section-icon" style="background:rgba(6,182,212,0.15)">⚙</div>
+                <h2>Tech Stack</h2>
+            </div>
+            <div class="section-divider"></div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Layer</th>
+                        <th>Technology</th>
+                        <th>Version</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Framework</td>
+                        <td>NestJS</td>
+                        <td><code>^11</code></td>
+                    </tr>
+                    <tr>
+                        <td>Language</td>
+                        <td>TypeScript</td>
+                        <td><code>^5</code></td>
+                    </tr>
+                    <tr>
+                        <td>Database</td>
+                        <td>PostgreSQL</td>
+                        <td><code>14</code></td>
+                    </tr>
+                    <tr>
+                        <td>ORM</td>
+                        <td>TypeORM</td>
+                        <td><code>^0.3</code></td>
+                    </tr>
+                    <tr>
+                        <td>Auth</td>
+                        <td>Passport-JWT + @nestjs/jwt</td>
+                        <td><code>^11</code></td>
+                    </tr>
+                    <tr>
+                        <td>Validation</td>
+                        <td>class-validator + class-transformer</td>
+                        <td>latest</td>
+                    </tr>
+                    <tr>
+                        <td>API Docs</td>
+                        <td>@nestjs/swagger (OpenAPI 3)</td>
+                        <td><code>^11</code></td>
+                    </tr>
+                    <tr>
+                        <td>Rate Limiting</td>
+                        <td>@nestjs/throttler</td>
+                        <td><code>^6</code></td>
+                    </tr>
+                    <tr>
+                        <td>Hashing</td>
+                        <td>bcrypt</td>
+                        <td><code>^6</code></td>
+                    </tr>
+                    <tr>
+                        <td>Containers</td>
+                        <td>Docker + docker-compose</td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td>Testing</td>
+                        <td>Jest + Supertest</td>
+                        <td><code>^30</code></td>
+                    </tr>
+                    <tr>
+                        <td>Package Manager</td>
+                        <td>Yarn</td>
+                        <td><code>^1.22</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- GETTING STARTED -->
+
+        <section class="section" id="getting-started">
+            <div class="section-header">
+                <div class="section-icon" style="background:rgba(16,185,129,0.15)">▶</div>
+                <h2>Getting Started</h2>
+            </div>
+            <div class="section-divider"></div>
+
+            
+            <h3>Prerequisites</h3>
+            <div class="card">
+                <p>You need the following installed on your system before getting started:</p>
+                <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+                    <div class="badge">Node.js ≥ 18</div>
+                    <div class="badge">Yarn ≥ 1.22</div>
+                    <div class="badge">Docker + Docker Compose</div>
+                    <div class="badge">Git</div>
+                </div>
+            </div>
+
+            <h3>Installation</h3>
+            <div class="code-block">
+                <span class="code-label">bash</span>
+                <span class="c"># 1. Clone the repository</span><br>
+                <span class="b">git clone https://github.com/your-org/devconnect-api.git</span><br>
+                cd devconnect-api<br><br>
+                <span class="c"># 2. Install dependencies</span><br>
+                <span class="b">yarn install</span>
+            </div>
+
+            <h3>Start the Database</h3>
+            <div class="code-block">
+                <span class="code-label">bash</span>
+                <span class="c"># Start PostgreSQL in Docker</span><br>
+                <span class="b">docker-compose up -d</span><br><br>
+                <span class="c"># Run migrations</span><br>
+                <span class="b">yarn migration:run</span>
+            </div>
+
+            <h3>Run the API</h3>
+            <div class="code-block">
+                <span class="code-label">bash</span>
+                <span class="c"># Development (watch mode)</span><br>
+                <span class="b">yarn start:dev</span><br><br>
+                <span class="c"># Production</span><br>
+                <span class="b">yarn build && yarn start:prod</span>
+            </div>
+
+            <div class="card" style="border-color:rgba(6,182,212,0.3);background:rgba(6,182,212,0.05);margin-top:16px;">
+                <p style="color:var(--accent2);">🌐 API available at <code
+                        style="color:white">http://localhost:3000/api</code><br>📖 Swagger UI at <code
+                        style="color:white">http://localhost:3000/api</code></p>
+            </div>
+            
+
+        </section>
+
+        <!-- ENVIRONMENT VARIABLES -->
+
+        <section class="section" id="environment">
+            <div class="section-header">
+                <div class="section-icon" style="background:rgba(245,158,11,0.15)">⚙</div>
+                <h2>Environment Variables</h2>
+            </div>
+            <div class="section-divider"></div>
+            <p style="margin-bottom:16px;">Copy <code>.env.template</code> to <code>.env</code> and fill in your values.
+            </p>
+
+            <div class="env-row">
+                <div class="env-key">STAGE</div>
+                <div class="env-desc">Environment stage</div>
+                <div class="env-default">dev</div>
+            </div>
+            <div class="env-row">
+                <div class="env-key">DB_USER</div>
+                <div class="env-desc">PostgreSQL username</div>
+                <div class="env-default">postgres</div>
+            </div>
+            <div class="env-row">
+                <div class="env-key">DB_PASSWORD</div>
+                <div class="env-desc">PostgreSQL password</div>
+                <div class="env-default">postgres</div>
+            </div>
+            <div class="env-row">
+                <div class="env-key">DB_NAME</div>
+                <div class="env-desc">Database name</div>
+                <div class="env-default">DB</div>
+            </div>
+            <div class="env-row">
+                <div class="env-key">DB_HOST</div>
+                <div class="env-desc">Database host</div>
+                <div class="env-default">localhost</div>
+            </div>
+            <div class="env-row">
+                <div class="env-key">DB_PORT</div>
+                <div class="env-desc">Database port</div>
+                <div class="env-default">5432</div>
+            </div>
+            <div class="env-row" style="border-color:rgba(239,68,68,0.3);">
+                <div class="env-key">JWT_SECRET</div>
+                <div class="env-desc" style="color:#f87171;">⚠ Required — use a strong random key in production</div>
+                <div class="env-default">—</div>
+            </div>
+            <div class="env-row">
+                <div class="env-key">PORT</div>
+                <div class="env-desc">HTTP server port</div>
+                <div class="env-default">3000</div>
+            </div>
+            <div class="env-row">
+                <div class="env-key">HOST_API</div>
+                <div class="env-desc">Full base URL of the API</div>
+                <div class="env-default">http://localhost:3000/api</div>
+            </div>
+            
+
+        </section>
+
+        <!-- AUTH FLOW -->
+
+        <section class="section" id="auth-flow">
+            <div class="section-header">
+                <div class="section-icon" style="background:rgba(124,58,237,0.15)">🔐</div>
+                <h2>Authentication Flow</h2>
+            </div>
+            <div class="section-divider"></div>
+
+            
+            <div class="token-grid">
+                <div class="token-card">
+                    <div class="token-type">Access Token</div>
+                    <div class="token-val">HttpOnly Cookie</div>
+                    <div class="token-label">TTL: 30 minutes</div>
+                </div>
+                <div class="token-card">
+                    <div class="token-type">Refresh Token</div>
+                    <div class="token-val">HttpOnly Cookie</div>
+                    <div class="token-label">TTL: 7 days · Rotated on use</div>
+                </div>
+                <div class="token-card">
+                    <div class="token-type">Blacklist</div>
+                    <div class="token-val">Database</div>
+                    <div class="token-label">Revoked on logout</div>
+                </div>
+            </div>
+
+            <div class="flow-diagram">
+                <div class="flow-steps">
+                    <div class="flow-step">
+                        <div class="flow-line">
+                            <div class="flow-circle">1</div>
+                            <div class="flow-connector"></div>
+                        </div>
+                        <div class="flow-content">
+                            <div class="flow-title">POST /api/auth/login</div>
+                            <div class="flow-desc">Client sends email + password. API validates credentials with bcrypt,
+                                then issues an access token (30min) and a refresh token (7d), both set as HttpOnly
+                                cookies.</div>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-line">
+                            <div class="flow-circle">2</div>
+                            <div class="flow-connector"></div>
+                        </div>
+                        <div class="flow-content">
+                            <div class="flow-title">Authenticated Request</div>
+                            <div class="flow-desc">The access token cookie is automatically sent with every request. The
+                                JwtAuthGuard validates it using the JwtStrategy and checks if it's blacklisted before
+                                granting access.</div>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-line">
+                            <div class="flow-circle">3</div>
+                            <div class="flow-connector"></div>
+                        </div>
+                        <div class="flow-content">
+                            <div class="flow-title">POST /api/auth/refresh</div>
+                            <div class="flow-desc">When the access token expires, the client calls /refresh. The refresh
+                                token is verified, the old one is revoked in the database, and new tokens are issued
+                                (rotation).</div>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-line">
+                            <div class="flow-circle">4</div>
+                        </div>
+                        <div class="flow-content" style="padding-bottom:0">
+                            <div class="flow-title">POST /api/auth/logout</div>
+                            <div class="flow-desc">The current access token is stored in the blacklist table. All
+                                refresh tokens for the user are revoked. Both cookies are cleared.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+        </section>
+
+        <!-- AUTH ENDPOINTS -->
+
+        <section class="section" id="auth-endpoints">
+            <div class="section-header">
+                <div class="section-icon" style="background:rgba(124,58,237,0.15)">⚡</div>
+                <h2>Auth</h2>
+            </div>
+            <div class="section-divider"></div>
+            <p style="margin-bottom:20px;">Base path: <code>/api/auth</code></p>
+
+            
+            <div class="endpoint">
+                <span class="method-tag method-post">POST</span>
+                <div>
+                    <div class="endpoint-path">/api/auth/register</div>
+                    <div class="endpoint-desc">Register a new developer account with email, password, professional role,
+                        and optional skills.</div>
+                </div>
+                <span class="auth-badge auth-pub">Public</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-post">POST</span>
+                <div>
+                    <div class="endpoint-path">/api/auth/login</div>
+                    <div class="endpoint-desc">Login and receive JWT tokens as HttpOnly cookies. Rate limited: 10
+                        req/min.</div>
+                </div>
+                <span class="auth-badge auth-pub">Public</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-post">POST</span>
+                <div>
+                    <div class="endpoint-path">/api/auth/refresh</div>
+                    <div class="endpoint-desc">Rotate access token using the refresh token cookie. Old refresh token is
+                        revoked.</div>
+                </div>
+                <span class="auth-badge auth-pub">Cookie</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-post">POST</span>
+                <div>
+                    <div class="endpoint-path">/api/auth/logout</div>
+                    <div class="endpoint-desc">Logout the authenticated user. Blacklists access token and revokes all
+                        refresh tokens.</div>
+                </div>
+                <span class="auth-badge auth-jwt">JWT</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-patch">PATCH</span>
+                <div>
+                    <div class="endpoint-path">/api/auth/:id/deactivate</div>
+                    <div class="endpoint-desc">Admin deactivates a user account by ID (soft delete).</div>
+                </div>
+                <span class="auth-badge auth-admin">ADMIN</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-patch">PATCH</span>
+                <div>
+                    <div class="endpoint-path">/api/auth/admin/reactivate/:id</div>
+                    <div class="endpoint-desc">Admin reactivates a previously deactivated user account by ID.</div>
+                </div>
+                <span class="auth-badge auth-admin">ADMIN</span>
+            </div>
+
+            <h3>Register request body</h3>
+            <div class="code-block">
+                <span class="code-label">json</span>
+                {<br>
+                &nbsp;&nbsp;<span class="k">"email"</span>: <span class="s">"john.doe@example.com"</span>,<br>
+                &nbsp;&nbsp;<span class="k">"password"</span>: <span class="s">"StrongPass123!"</span>,<br>
+                &nbsp;&nbsp;<span class="k">"fullName"</span>: <span class="s">"John Doe"</span>,<br>
+                &nbsp;&nbsp;<span class="k">"professionalRoleId"</span>: <span class="s">"uuid-of-role"</span>,<br>
+                &nbsp;&nbsp;<span class="k">"skills"</span>: [<span class="s">"uuid-skill-1"</span>, <span
+                    class="s">"uuid-skill-2"</span>]<br>
+                }
+            </div>
+
+            <div class="card" style="border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.04);">
+                <p style="color:var(--accent-warn);">⚠ Password rules: min 6 chars, max 50, must contain at least one
+                    uppercase letter, one lowercase letter, and one number or special character.</p>
+            </div>
+            
+
+        </section>
+
+        <!-- USERS ENDPOINTS -->
+
+        <section class="section" id="users-endpoints">
+            <div class="section-header">
+                <div class="section-icon" style="background:rgba(6,182,212,0.15)">👤</div>
+                <h2>Users</h2>
+            </div>
+            <div class="section-divider"></div>
+            <p style="margin-bottom:20px;">Base path: <code>/api/users</code></p>
+
+            
+            <div class="endpoint">
+                <span class="method-tag method-get">GET</span>
+                <div>
+                    <div class="endpoint-path">/api/users</div>
+                    <div class="endpoint-desc">Paginated public user list. Query: <code>limit</code>,
+                        <code>offset</code>, <code>search</code> (by full name).</div>
+                </div>
+                <span class="auth-badge auth-pub">Public</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-get">GET</span>
+                <div>
+                    <div class="endpoint-path">/api/users/me</div>
+                    <div class="endpoint-desc">Returns the currently authenticated user's full profile from the JWT
+                        payload.</div>
+                </div>
+                <span class="auth-badge auth-jwt">JWT</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-get">GET</span>
+                <div>
+                    <div class="endpoint-path">/api/users/:id</div>
+                    <div class="endpoint-desc">Fetch a specific user's public profile by UUID.</div>
+                </div>
+                <span class="auth-badge auth-pub">Public</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-get">GET</span>
+                <div>
+                    <div class="endpoint-path">/api/users/admin</div>
+                    <div class="endpoint-desc">Get all users including inactive ones. Admin-only full view.</div>
+                </div>
+                <span class="auth-badge auth-admin">ADMIN</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-patch">PATCH</span>
+                <div>
+                    <div class="endpoint-path">/api/users/updateProfile</div>
+                    <div class="endpoint-desc">Update the authenticated user's profile fields (all optional).</div>
+                </div>
+                <span class="auth-badge auth-jwt">JWT</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-patch">PATCH</span>
+                <div>
+                    <div class="endpoint-path">/api/users/deactivate</div>
+                    <div class="endpoint-desc">Self-deactivate the authenticated user's account (soft delete).</div>
+                </div>
+                <span class="auth-badge auth-jwt">JWT</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-patch">PATCH</span>
+                <div>
+                    <div class="endpoint-path">/api/users/reactivate</div>
+                    <div class="endpoint-desc">Reactivate a deactivated account by providing email + password
+                        credentials.</div>
+                </div>
+                <span class="auth-badge auth-pub">Public</span>
+            </div>
+
+            <h3>Updatable profile fields</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>fullName</code></td>
+                        <td>string</td>
+                        <td>Display name</td>
+                    </tr>
+                    <tr>
+                        <td><code>bio</code></td>
+                        <td>string</td>
+                        <td>Short biography</td>
+                    </tr>
+                    <tr>
+                        <td><code>location</code></td>
+                        <td>string</td>
+                        <td>e.g. "Madrid, Spain"</td>
+                    </tr>
+                    <tr>
+                        <td><code>github</code></td>
+                        <td>string</td>
+                        <td>GitHub profile URL</td>
+                    </tr>
+                    <tr>
+                        <td><code>linkedin</code></td>
+                        <td>string</td>
+                        <td>LinkedIn profile URL</td>
+                    </tr>
+                    <tr>
+                        <td><code>portfolio</code></td>
+                        <td>string</td>
+                        <td>Personal website / portfolio URL</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+
+        </section>
+
+        <!-- PROJECTS ENDPOINTS -->
+
+        <section class="section" id="projects-endpoints">
+            <div class="section-header">
+                <div class="section-icon" style="background:rgba(16,185,129,0.15)">🚀</div>
+                <h2>Projects</h2>
+            </div>
+            <div class="section-divider"></div>
+            <p style="margin-bottom:20px;">Base path: <code>/api/projects</code></p>
+
+            
+            <div class="group-title">Project CRUD</div>
+
+            <div class="endpoint">
+                <span class="method-tag method-post">POST</span>
+                <div>
+                    <div class="endpoint-path">/api/projects</div>
+                    <div class="endpoint-desc">Create a new project. Creator is automatically added as first member.
+                    </div>
+                </div>
+                <span class="auth-badge auth-jwt">JWT</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-get">GET</span>
+                <div>
+                    <div class="endpoint-path">/api/projects</div>
+                    <div class="endpoint-desc">List active projects. Query: <code>page</code>, <code>limit</code>,
+                        <code>status</code>, <code>tech</code>, <code>search</code>.</div>
+                </div>
+                <span class="auth-badge auth-pub">Public</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-get">GET</span>
+                <div>
+                    <div class="endpoint-path">/api/projects/:id</div>
+                    <div class="endpoint-desc">Get a single project with owner and members details.</div>
+                </div>
+                <span class="auth-badge auth-pub">Public</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-patch">PATCH</span>
+                <div>
+                    <div class="endpoint-path">/api/projects/:id</div>
+                    <div class="endpoint-desc">Update project fields. Only the project owner can update.</div>
+                </div>
+                <span class="auth-badge auth-jwt">JWT (owner)</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-delete">DELETE</span>
+                <div>
+                    <div class="endpoint-path">/api/projects/:id</div>
+                    <div class="endpoint-desc">Archive a project (soft delete). Only the project owner can archive.
+                    </div>
+                </div>
+                <span class="auth-badge auth-jwt">JWT (owner)</span>
+            </div>
+
+            <div class="group-title">Applications & Members</div>
+
+            <div class="endpoint">
+                <span class="method-tag method-post">POST</span>
+                <div>
+                    <div class="endpoint-path">/api/projects/:id/apply</div>
+                    <div class="endpoint-desc">Apply to join a project with an optional message. One application per
+                        user per project.</div>
+                </div>
+                <span class="auth-badge auth-jwt">JWT</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-get">GET</span>
+                <div>
+                    <div class="endpoint-path">/api/projects/:id/applications</div>
+                    <div class="endpoint-desc">List all applications for a project. Only the project owner can view
+                        applications.</div>
+                </div>
+                <span class="auth-badge auth-jwt">JWT (owner)</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-patch">PATCH</span>
+                <div>
+                    <div class="endpoint-path">/api/projects/applications/:id/accept</div>
+                    <div class="endpoint-desc">Accept an application. Applicant is automatically added as a project
+                        member.</div>
+                </div>
+                <span class="auth-badge auth-jwt">JWT (owner)</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-patch">PATCH</span>
+                <div>
+                    <div class="endpoint-path">/api/projects/applications/:id/reject</div>
+                    <div class="endpoint-desc">Reject a pending application.</div>
+                </div>
+                <span class="auth-badge auth-jwt">JWT (owner)</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-get">GET</span>
+                <div>
+                    <div class="endpoint-path">/api/projects/:id/members</div>
+                    <div class="endpoint-desc">Get all members of a project with their professional role and skills.
+                    </div>
+                </div>
+                <span class="auth-badge auth-pub">Public</span>
+            </div>
+
+            <div class="group-title">Discovery</div>
+
+            <div class="endpoint">
+                <span class="method-tag method-get">GET</span>
+                <div>
+                    <div class="endpoint-path">/api/projects/discover</div>
+                    <div class="endpoint-desc">Get up to 20 projects scored by relevance to the authenticated user's
+                        skills and role.</div>
+                </div>
+                <span class="auth-badge auth-jwt">JWT</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-get">GET</span>
+                <div>
+                    <div class="endpoint-path">/api/projects/applied</div>
+                    <div class="endpoint-desc">List all projects the authenticated user has applied to, with application
+                        status.</div>
+                </div>
+                <span class="auth-badge auth-jwt">JWT</span>
+            </div>
+
+            <h3>Project Status Lifecycle</h3>
+            <div class="status-grid">
+                <div class="status-chip"
+                    style="background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.3);color:#c084fc;">idea
+                </div>
+                <span class="chip-arrow">→</span>
+                <div class="status-chip"
+                    style="background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.3);color:#60a5fa;">
+                    building</div>
+                <span class="chip-arrow">→</span>
+                <div class="status-chip"
+                    style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);color:#fbbf24;">mvp
+                </div>
+                <span class="chip-arrow">→</span>
+                <div class="status-chip"
+                    style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:#34d399;">
+                    launched</div>
+            </div>
+
+            <h3>Application Status Values</h3>
+            <div class="status-grid">
+                <div class="status-chip"
+                    style="background:rgba(107,114,128,0.12);border:1px solid rgba(107,114,128,0.3);color:#9ca3af;">
+                    pending</div>
+                <div class="status-chip"
+                    style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:#34d399;">
+                    accepted</div>
+                <div class="status-chip"
+                    style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#f87171;">rejected
+                </div>
+            </div>
+
+            <h3>Create project body</h3>
+            <div class="code-block">
+                <span class="code-label">json</span>
+                {<br>
+                &nbsp;&nbsp;<span class="k">"title"</span>: <span class="s">"DevConnect"</span>,<br>
+                &nbsp;&nbsp;<span class="k">"description"</span>: <span class="s">"A platform for developer
+                    collaboration."</span>,<br>
+                &nbsp;&nbsp;<span class="k">"techStack"</span>: [<span class="s">"NestJS"</span>, <span
+                    class="s">"PostgreSQL"</span>, <span class="s">"NextJS"</span>],<br>
+                &nbsp;&nbsp;<span class="k">"repositoryUrl"</span>: <span
+                    class="s">"https://github.com/org/repo"</span>, <span class="c">// optional</span><br>
+                &nbsp;&nbsp;<span class="k">"demoUrl"</span>: <span class="s">"https://devconnect.app"</span>, <span
+                    class="c">// optional</span><br>
+                &nbsp;&nbsp;<span class="k">"docsUrl"</span>: <span class="s">"https://docs.devconnect.app"</span>,
+                <span class="c">// optional</span><br>
+                &nbsp;&nbsp;<span class="k">"status"</span>: <span class="s">"building"</span> <span class="c">//
+                    optional</span><br>
+                }
+            </div>
+
+            <h3>Discover response example</h3>
+            <div class="code-block">
+                <span class="code-label">json</span>
+                [<br>
+                &nbsp;&nbsp;{<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"id"</span>: <span class="s">"uuid"</span>,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"title"</span>: <span class="s">"Open Source
+                    Dashboard"</span>,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"techStack"</span>: [<span class="s">"NestJS"</span>, <span
+                    class="s">"React"</span>],<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"score"</span>: <span class="n">5</span>, <span class="c">//
+                    relevance score</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"owner"</span>: { <span class="k">"id"</span>: <span
+                    class="s">"uuid"</span>, <span class="k">"fullName"</span>: <span class="s">"Jane Smith"</span>
+                }<br>
+                &nbsp;&nbsp;}<br>
+                ]
+            </div>
+            
+
+        </section>
+
+        <!-- FOLLOWS -->
+
+        <section class="section" id="follows-endpoints">
+            <div class="section-header">
+                <div class="section-icon" style="background:rgba(245,158,11,0.15)">👥</div>
+                <h2>Follows</h2>
+            </div>
+            <div class="section-divider"></div>
+            <p style="margin-bottom:20px;">Base path: <code>/api/follows</code></p>
+
+            
+            <div class="endpoint">
+                <span class="method-tag method-post">POST</span>
+                <div>
+                    <div class="endpoint-path">/api/follows/:id</div>
+                    <div class="endpoint-desc">Follow a user by their UUID. Cannot follow yourself.</div>
+                </div>
+                <span class="auth-badge auth-jwt">JWT</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-delete">DELETE</span>
+                <div>
+                    <div class="endpoint-path">/api/follows/:id</div>
+                    <div class="endpoint-desc">Unfollow a user by their UUID.</div>
+                </div>
+                <span class="auth-badge auth-jwt">JWT</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-get">GET</span>
+                <div>
+                    <div class="endpoint-path">/api/follows/users/:id/followers</div>
+                    <div class="endpoint-desc">Get a list of users who follow the specified user.</div>
+                </div>
+                <span class="auth-badge auth-jwt">JWT</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-get">GET</span>
+                <div>
+                    <div class="endpoint-path">/api/follows/users/:id/following</div>
+                    <div class="endpoint-desc">Get a list of users that the specified user is following.</div>
+                </div>
+                <span class="auth-badge auth-jwt">JWT</span>
+            </div>
+            
+
+        </section>
+
+        <!-- SKILLS -->
+
+        <section class="section" id="skills-endpoints">
+            <div class="section-header">
+                <div class="section-icon" style="background:rgba(16,185,129,0.15)">🔧</div>
+                <h2>Skills</h2>
+            </div>
+            <div class="section-divider"></div>
+            <p style="margin-bottom:20px;">Base path: <code>/api/skills</code> — Skills are admin-managed and referenced
+                by UUID during user registration.</p>
+
+            
+            <div class="endpoint">
+                <span class="method-tag method-get">GET</span>
+                <div>
+                    <div class="endpoint-path">/api/skills</div>
+                    <div class="endpoint-desc">Get the full list of available skills.</div>
+                </div>
+                <span class="auth-badge auth-pub">Public</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-post">POST</span>
+                <div>
+                    <div class="endpoint-path">/api/skills</div>
+                    <div class="endpoint-desc">Create a new skill entry in the catalog.</div>
+                </div>
+                <span class="auth-badge auth-admin">ADMIN</span>
+            </div>
+            
+
+        </section>
+
+        <!-- PROFESSIONAL ROLES -->
+
+        <section class="section" id="roles-endpoints">
+            <div class="section-header">
+                <div class="section-icon" style="background:rgba(124,58,237,0.15)">💼</div>
+                <h2>Professional Roles</h2>
+            </div>
+            <div class="section-divider"></div>
+            <p style="margin-bottom:20px;">Base path: <code>/api/professional-roles</code> — Examples: Backend
+                Developer, Frontend Developer, DevOps Engineer, UI/UX Designer, Mobile Developer.</p>
+
+            
+            <div class="endpoint">
+                <span class="method-tag method-get">GET</span>
+                <div>
+                    <div class="endpoint-path">/api/professional-roles</div>
+                    <div class="endpoint-desc">Get all available professional roles.</div>
+                </div>
+                <span class="auth-badge auth-pub">Public</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method-tag method-post">POST</span>
+                <div>
+                    <div class="endpoint-path">/api/professional-roles</div>
+                    <div class="endpoint-desc">Create a new professional role in the catalog.</div>
+                </div>
+                <span class="auth-badge auth-admin">ADMIN</span>
+            </div>
+            
+
+        </section>
+
+        <!-- METADATA -->
+
+        <section class="section" id="metadata-endpoints">
+            <div class="section-header">
+                <div class="section-icon" style="background:rgba(6,182,212,0.15)">📦</div>
+                <h2>Metadata</h2>
+            </div>
+            <div class="section-divider"></div>
+            <p style="margin-bottom:20px;">Base path: <code>/api/metadata</code> — Convenience aggregator for frontend
+                registration forms.</p>
+
+            
+            <div class="endpoint">
+                <span class="method-tag method-get">GET</span>
+                <div>
+                    <div class="endpoint-path">/api/metadata/register</div>
+                    <div class="endpoint-desc">Returns all skills and all professional roles in a single request, ideal
+                        for populating registration forms.</div>
+                </div>
+                <span class="auth-badge auth-pub">Public</span>
+            </div>
+
+            <h3>Response structure</h3>
+            <div class="code-block">
+                <span class="code-label">json</span>
+                {<br>
+                &nbsp;&nbsp;<span class="k">"skills"</span>: [{ <span class="k">"id"</span>: <span
+                    class="s">"uuid"</span>, <span class="k">"name"</span>: <span class="s">"NestJS"</span> }, ...],<br>
+                &nbsp;&nbsp;<span class="k">"professionalRoles"</span>: [{ <span class="k">"id"</span>: <span
+                    class="s">"uuid"</span>, <span class="k">"name"</span>: <span class="s">"Backend Developer"</span>
+                }, ...]<br>
+                }
+            </div>
+            
+
+        </section>
+
+        <!-- SECURITY -->
+
+        <section class="section" id="security">
+            <div class="section-header">
+                <div class="section-icon" style="background:rgba(239,68,68,0.15)">🛡</div>
+                <h2>Security</h2>
+            </div>
+            <div class="section-divider"></div>
+
+            
+            <div class="card" style="margin-bottom:10px;">
+                <div class="flow-title" style="margin-bottom:6px;">🍪 HttpOnly Cookies</div>
+                <div class="flow-desc">All JWT tokens are stored in HttpOnly cookies, preventing XSS-based token theft.
+                    Cookies use <code>SameSite: lax</code> and <code>secure: true</code> in production.</div>
+            </div>
+            <div class="card" style="margin-bottom:10px;">
+                <div class="flow-title" style="margin-bottom:6px;">🔄 Token Rotation</div>
+                <div class="flow-desc">Each refresh token usage invalidates the previous token and issues a new one,
+                    limiting the exposure window if a token is stolen.</div>
+            </div>
+            <div class="card" style="margin-bottom:10px;">
+                <div class="flow-title" style="margin-bottom:6px;">🚫 Token Blacklisting</div>
+                <div class="flow-desc">On logout, the current access token is inserted into a blacklist table and
+                    checked on every authenticated request until it naturally expires.</div>
+            </div>
+            <div class="card" style="margin-bottom:10px;">
+                <div class="flow-title" style="margin-bottom:6px;">🔒 bcrypt Hashing</div>
+                <div class="flow-desc">All passwords are hashed with bcrypt (10 salt rounds). Refresh tokens are also
+                    hashed before storing in the database.</div>
+            </div>
+            <div class="card" style="margin-bottom:10px;">
+                <div class="flow-title" style="margin-bottom:6px;">🚦 Rate Limiting</div>
+                <div class="flow-desc">Login endpoint is throttled to 10 requests per minute per IP using
+                    <code>@nestjs/throttler</code> to prevent brute-force attacks.</div>
+            </div>
+            <div class="card" style="margin-bottom:10px;">
+                <div class="flow-title" style="margin-bottom:6px;">✅ Input Validation</div>
+                <div class="flow-desc">Global <code>ValidationPipe</code> with <code>whitelist: true</code> and
+                    <code>forbidNonWhitelisted: true</code> strips unknown properties and rejects invalid payloads.
+                </div>
+            </div>
+            
+
+        </section>
+
+        <!-- TESTING -->
+
+        <section class="section" id="testing">
+            <div class="section-header">
+                <div class="section-icon" style="background:rgba(16,185,129,0.15)">🧪</div>
+                <h2>Testing</h2>
+            </div>
+            <div class="section-divider"></div>
+
+            
+            <div class="code-block">
+                <span class="code-label">bash</span>
+                yarn test <span class="c"># Unit tests</span><br>
+                yarn test:watch <span class="c"># Watch mode</span><br>
+                yarn test:cov <span class="c"># Coverage report</span><br>
+                yarn test:e2e <span class="c"># End-to-end tests</span>
+            </div>
+
+            <h3>Coverage scope</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Module</th>
+                        <th>Coverage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>AuthService</td>
+                        <td>register, login, token issuance, refresh, logout</td>
+                    </tr>
+                    <tr>
+                        <td>AuthController</td>
+                        <td>endpoint integration</td>
+                    </tr>
+                    <tr>
+                        <td>JwtAuthGuard</td>
+                        <td>token validation and blacklist check</td>
+                    </tr>
+                    <tr>
+                        <td>JwtStrategy</td>
+                        <td>passport strategy verification</td>
+                    </tr>
+                    <tr>
+                        <td>ProjectsService</td>
+                        <td>CRUD, applications, discovery algorithm</td>
+                    </tr>
+                    <tr>
+                        <td>SkillsService</td>
+                        <td>catalog management</td>
+                    </tr>
+                    <tr>
+                        <td>FollowsService</td>
+                        <td>follow/unfollow logic</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+
+        </section>
+
+        <!-- SCRIPTS -->
+
+        <section class="section" id="scripts">
+            <div class="section-header">
+                <div class="section-icon" style="background:rgba(16,185,129,0.15)">⚡</div>
+                <h2>Scripts</h2>
+            </div>
+            <div class="section-divider"></div>
+            <div class="script-grid">
+                <div class="script-item">
+                    <div class="script-cmd">yarn start:dev</div>
+                    <div class="script-label">Start in watch mode</div>
+                </div>
+                <div class="script-item">
+                    <div class="script-cmd">yarn start:prod</div>
+                    <div class="script-label">Start compiled production build</div>
+                </div>
+                <div class="script-item">
+                    <div class="script-cmd">yarn build</div>
+                    <div class="script-label">Compile TypeScript to dist/</div>
+                </div>
+                <div class="script-item">
+                    <div class="script-cmd">yarn test</div>
+                    <div class="script-label">Run unit tests</div>
+                </div>
+                <div class="script-item">
+                    <div class="script-cmd">yarn test:cov</div>
+                    <div class="script-label">Tests with coverage report</div>
+                </div>
+                <div class="script-item">
+                    <div class="script-cmd">yarn test:e2e</div>
+                    <div class="script-label">End-to-end tests</div>
+                </div>
+                <div class="script-item">
+                    <div class="script-cmd">yarn lint</div>
+                    <div class="script-label">Lint and auto-fix code</div>
+                </div>
+                <div class="script-item">
+                    <div class="script-cmd">yarn format</div>
+                    <div class="script-label">Format with Prettier</div>
+                </div>
+                <div class="script-item">
+                    <div class="script-cmd">yarn migration:generate</div>
+                    <div class="script-label">Generate migration from entity changes</div>
+                </div>
+                <div class="script-item">
+                    <div class="script-cmd">yarn migration:run</div>
+                    <div class="script-label">Apply pending migrations</div>
+                </div>
+                <div class="script-item">
+                    <div class="script-cmd">yarn migration:revert</div>
+                    <div class="script-label">Revert last migration</div>
+                </div>
+                <div class="script-item">
+                    <div class="script-cmd">yarn migration:show</div>
+                    <div class="script-label">List migrations and their status</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTRIBUTING -->
+
+        <section class="section" id="contributing">
+            <div class="section-header">
+                <div class="section-icon" style="background:rgba(124,58,237,0.15)">🤝</div>
+                <h2>Contributing</h2>
+            </div>
+            <div class="section-divider"></div>
+            <div class="flow-diagram">
+                <div class="flow-steps">
+                    <div class="flow-step">
+                        <div class="flow-line">
+                            <div class="flow-circle">1</div>
+                            <div class="flow-connector"></div>
+                        </div>
+                        <div class="flow-content">
+                            <div class="flow-title">Fork & Clone</div>
+                            <div class="flow-desc">Fork the repository on GitHub and clone your fork locally.</div>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-line">
+                            <div class="flow-circle">2</div>
+                            <div class="flow-connector"></div>
+                        </div>
+                        <div class="flow-content">
+                            <div class="flow-title">Create a Branch</div>
+                            <div class="flow-desc"><code>git checkout -b feat/your-feature-name</code></div>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-line">
+                            <div class="flow-circle">3</div>
+                            <div class="flow-connector"></div>
+                        </div>
+                        <div class="flow-content">
+                            <div class="flow-title">Write Code + Tests</div>
+                            <div class="flow-desc">Follow the NestJS module pattern. Every service should have unit
+                                tests. Document new endpoints with Swagger decorators.</div>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-line">
+                            <div class="flow-circle">4</div>
+                            <div class="flow-connector"></div>
+                        </div>
+                        <div class="flow-content">
+                            <div class="flow-title">Commit (Conventional Commits)</div>
+                            <div class="flow-desc">
+                                <code>feature: add project bookmarking</code><br><code>fix: resolve refresh token race condition</code><br><code>docs: update auth flow diagram</code>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-line">
+                            <div class="flow-circle">5</div>
+                        </div>
+                        <div class="flow-content" style="padding-bottom:0">
+                            <div class="flow-title">Open a Pull Request</div>
+                            <div class="flow-desc">Push your branch and open a PR against <code>main</code>. Ensure
+                                <code>yarn test</code> and <code>yarn lint</code> pass before submitting.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="card"
+                style="margin-top:16px;border-color:rgba(124,58,237,0.3);background:rgba(124,58,237,0.05);text-align:center;">
+                <p style="color:var(--text-muted);">Made with ❤️ by m41k80· MIT License</p>
+            </div>
+            
+
+        </section>
+
+    </main>
+
+    <script>
+        // Active nav on scroll
+        const sections = document.querySelectorAll('.section, .hero');
+        const navItems = document.querySelectorAll('.nav-item');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    navItems.forEach(item => {
+                        item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+                    });
+                }
+            });
+        }, { rootMargin: '-30% 0px -60% 0px' });
+
+        document.querySelectorAll('[id]').forEach(el => observer.observe(el));
+    </script>
+
+</body>
+
+</html>
