@@ -3,6 +3,25 @@
 <!-- <img src="my badge" alt="DevConnect API" /> -->
 
 
+
+
+# DevConnect API
+
+**A REST API platform that connects developers to collaborate on real-world open source projects.**
+
+[![NestJS](https://img.shields.io/badge/NestJS-11.x-E0234E?style=flat-square&logo=nestjs&logoColor=white)](https://nestjs.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14-336791?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![TypeORM](https://img.shields.io/badge/TypeORM-0.3.x-FE0803?style=flat-square)](https://typeorm.io/)
+[![JWT](https://img.shields.io/badge/JWT-Auth-000000?style=flat-square&logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Swagger](https://img.shields.io/badge/Swagger-Docs-85EA2D?style=flat-square&logo=swagger&logoColor=black)](https://swagger.io/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+
+[Getting Started](#getting-started) · [API Reference](#api-reference) · [Architecture](#architecture) · [Contributing](#contributing)
+
+</div>
+
 ## Apóyame / Buy Me a Coffee
 
 ❤️ Apoya el crecimiento de DevConnect || ❤️ Support DevConnect's Growth
@@ -22,23 +41,6 @@ Are you a company? Become a Sponsor to showcase your brand to a growing communit
 
 [![Buy Me a Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/m41k80)
 
-
-# DevConnect API
-
-**A REST API platform that connects developers to collaborate on real-world open source projects.**
-
-[![NestJS](https://img.shields.io/badge/NestJS-11.x-E0234E?style=flat-square&logo=nestjs&logoColor=white)](https://nestjs.com/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14-336791?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![TypeORM](https://img.shields.io/badge/TypeORM-0.3.x-FE0803?style=flat-square)](https://typeorm.io/)
-[![JWT](https://img.shields.io/badge/JWT-Auth-000000?style=flat-square&logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
-[![Swagger](https://img.shields.io/badge/Swagger-Docs-85EA2D?style=flat-square&logo=swagger&logoColor=black)](https://swagger.io/)
-[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
-
-[Getting Started](#getting-started) · [API Reference](#api-reference) · [Architecture](#architecture) · [Contributing](#contributing)
-
-</div>
 
 -----
 
