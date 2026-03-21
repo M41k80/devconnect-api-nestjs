@@ -807,6 +807,48 @@ Contributions are welcome! Here’s how to get started:
 
 -----
 
+## 🗺️ Roadmap
+
+The journey of **DevConnect** is just beginning. Here is our plan for the upcoming months.  
+Your contributions and sponsorships help us reach these milestones faster!
+
+---
+
+### 🟢 Phase 1: Foundation (Completed)
+
+- [x] **Core API Architecture:** NestJS + TypeORM + PostgreSQL  
+- [x] **Advanced Auth System:** JWT Access/Refresh tokens with rotation  
+- [x] **Project Management:** CRUD, status lifecycle, and ownership  
+- [x] **Application System:** Join projects and manage applicants  
+- [x] **Developer Profiles:** Skills, professional roles, and social links  
+
+---
+
+### 🟡 Phase 2: Engagement & Social (In Progress)
+
+- [ ] **Real-time Notifications:** Socket.io integration for application updates and new followers  
+- [ ] **Project Search 2.0:** Advanced filtering by multiple tech stacks and location  
+- [ ] **GitHub Integration:** Auto-sync profile data and public repositories via GitHub API  
+- [ ] **Markdown Support:** Enable rich descriptions for project READMEs within the platform  
+
+---
+
+### 🟠 Phase 3: Ecosystem & Scale (Future)
+
+- [ ] **DevConnect CLI:** A command-line tool to interact with the API directly from the terminal  
+- [ ] **Messaging System:** Private encrypted chats between project members  
+- [ ] **Organization Accounts:** Support for tech communities and open-source organizations  
+- [ ] **In-App Analytics:** Track project views and application conversion rates  
+
+---
+
+> 💡 **Note:** Features in Phase 3 are prioritized based on community feedback and sponsorship support.
+
+
+
+-----
+
+
 ## License
 
 This project is open-source and available under the [MIT License](LICENSE).
