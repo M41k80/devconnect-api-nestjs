@@ -293,7 +293,8 @@ src/
 │ location        │  └────────────┘
 │ github          │
 │ linkedin        │    ┌──────────────┐
-│ portfolio       │    │  user_skills │
+│ portfolio       │
+│ profileImageUrl │     │    │  user_skills │
 │ role (enum)     │────│──────────────│────┐
 │ isActive        │    │ user_id      │    │
 │ deletedAt       │    │ skill_id     │    │
@@ -545,6 +546,7 @@ Requires valid JWT cookie. Blacklists the current access token and revokes all r
   "github": "github.com/johndoe",
   "linkedin": "linkedin.com/in/johndoe",
   "portfolio": "johndoe.dev"
+  "profileImageUrl": "https://avatars.githubusercontent.com/u/123456789?v=4"
 }
 ```
 
