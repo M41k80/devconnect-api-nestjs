@@ -9,7 +9,6 @@ import {
   Param,
   Patch,
   Delete,
-  ParseIntPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -27,6 +26,7 @@ import { ApplyProjectDto } from './dto/apply-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectResponseDto } from './dto/responses/project-response.dto';
 import { PaginationDto } from './dto/pagination/pagination.dto';
+
 @ApiTags('Projects')
 @ApiResponse({
   status: 201,
@@ -54,38 +54,30 @@ export class ProjectsController {
     return this.projectsService.createProject(req.user.id, createProjectDto);
   }
 
-  @Get()
+  @Get('applied')
   @ApiOperation({
-    summary: 'Get projects',
+    summary: 'Get applied projects',
   })
-  getProjects(@Query() paginationQueryDto: GetProjectsDto) {
-    return this.projectsService.getProjects(paginationQueryDto);
+  @UseGuards(JwtAuthGuard)
+  getAppliedProjects(@Req() req: AuthRequest) {
+    return this.projectsService.getAppliedProjects(req.user.id);
   }
 
-  @Get(':id')
-  @ApiOperation({
-    summary: 'Get project by id',
-  })
-  getProjectById(@Param('id') id: string) {
-    return this.projectsService.getProjectById(id);
-  }
-
-  @Post(':id/apply')
+  @Get('discover')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
-    summary: 'Apply to a project',
+    summary: 'Discover projects',
   })
-  @ApiBearerAuth()
-  applyToProject(
-    @Param('id') projectId: string,
-    @Req() req: AuthRequest,
-    @Body() applyProjectDto: ApplyProjectDto,
-  ) {
-    return this.projectsService.applyToProject(
-      req.user.id,
-      projectId,
-      applyProjectDto,
-    );
+  getDiscoverProjects(@Req() req: AuthRequest) {
+    return this.projectsService.discoverProjects(req.user.id);
+  }
+
+  @Get(':id/members')
+  @ApiOperation({
+    summary: 'Get project members',
+  })
+  getProjectMembers(@Param('id') projectId: string) {
+    return this.projectsService.getProjectMembers(projectId);
   }
 
   @Get(':id/applications')
@@ -104,6 +96,24 @@ export class ProjectsController {
       req.user.id,
       paginationQueryDto.page,
       paginationQueryDto.limit,
+    );
+  }
+
+  @Post(':id/apply')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Apply to a project',
+  })
+  @ApiBearerAuth()
+  applyToProject(
+    @Param('id') projectId: string,
+    @Req() req: AuthRequest,
+    @Body() applyProjectDto: ApplyProjectDto,
+  ) {
+    return this.projectsService.applyToProject(
+      req.user.id,
+      projectId,
+      applyProjectDto,
     );
   }
 
@@ -133,6 +143,22 @@ export class ProjectsController {
     return this.projectsService.rejectApplication(applicationId, req.user.id);
   }
 
+  @Get()
+  @ApiOperation({
+    summary: 'Get projects',
+  })
+  getProjects(@Query() paginationQueryDto: GetProjectsDto) {
+    return this.projectsService.getProjects(paginationQueryDto);
+  }
+
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Get project by id',
+  })
+  getProjectById(@Param('id') id: string) {
+    return this.projectsService.getProjectById(id);
+  }
+
   @Patch(':id')
   @ApiOperation({
     summary: 'Update project',
@@ -159,31 +185,5 @@ export class ProjectsController {
   @ApiBearerAuth()
   deleteProject(@Param('id') projectId: string, @Req() req: AuthRequest) {
     return this.projectsService.deleteProject(projectId, req.user.id);
-  }
-
-  @Get(':id/members')
-  @ApiOperation({
-    summary: 'Get project members',
-  })
-  getProjectMembers(@Param('id') projectId: string) {
-    return this.projectsService.getProjectMembers(projectId);
-  }
-
-  @Get('applied')
-  @ApiOperation({
-    summary: 'Get applied projects',
-  })
-  @UseGuards(JwtAuthGuard)
-  getAppliedProjects(@Req() req: AuthRequest) {
-    return this.projectsService.getAppliedProjects(req.user.id);
-  }
-
-  @Get('discover')
-  @ApiOperation({
-    summary: 'Discover projects',
-  })
-  @UseGuards(JwtAuthGuard)
-  getDiscoverProjects(@Req() req: AuthRequest) {
-    return this.projectsService.discoverProjects(req.user.id);
   }
 }

@@ -14,6 +14,7 @@ import { Role } from './enums/role.enum';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { Throttle } from '@nestjs/throttler';
+import { RefreshResponseDto } from './dto/refresh-response-dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -55,13 +56,17 @@ export class AuthController {
       sameSite: 'lax',
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     });
-    return { message: data.message };
+    return { message: data.message, user: data.fullName };
   }
 
   @Post('refresh')
   @ApiOperation({ summary: 'Refresh access token' })
-  @ApiResponse({ status: 200, description: 'Access token refreshed' })
-  async refresh(@Req() req: Request) {
+  @ApiResponse({
+    status: 200,
+    description: 'Access token refreshed',
+    type: RefreshResponseDto,
+  })
+  async refresh(@Req() req: Request): Promise<RefreshResponseDto> {
     const refreshToken = req.cookies['refreshToken'] as string | undefined;
 
     if (!refreshToken) {
@@ -95,7 +100,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  @Patch(':id/deactivate')
+  @Patch('admin/:id/deactivate')
   @ApiOperation({ summary: 'Delete user' })
   @ApiResponse({ status: 200, description: 'User deleted successfully' })
   deactivateUser(@Param('id') id: string) {
@@ -104,7 +109,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  @Patch('admin/reactivate/:id')
+  @Patch('admin/:id/reactivate')
   @ApiOperation({ summary: 'Admin reactivates user account' })
   reactivateByAdmin(@Param('id') id: string) {
     return this.userService.reactivateUser(id);

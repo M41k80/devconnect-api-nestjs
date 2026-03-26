@@ -14,6 +14,7 @@ import { SkillsModule } from './skills/skills.module';
 import { DatabaseModule } from './database/database.module';
 import { MetadataModule } from './metadata/metadata.module';
 import { ProjectsModule } from './projects/projects.module';
+import { StatsModule } from './stats/stats.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { ProjectsModule } from './projects/projects.module';
     SkillsModule,
     MetadataModule,
     ProjectsModule,
+    StatsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
