@@ -16,6 +16,7 @@ import { RefreshToken } from './entities';
 import { User } from 'src/users/entities/user.entity';
 import { ProfessionalRole } from 'src/professional-roles/entities/professional-role.entity';
 import { Skill } from 'src/skills/entities/skill.entity';
+import { RefreshResponseDto } from './dto/refresh-response-dto';
 
 @Injectable()
 export class AuthService {
@@ -141,12 +142,11 @@ export class AuthService {
     await this.refreshRepo.save(refresh);
   }
 
-  async refresh(token: string) {
+  async refresh(token: string): Promise<RefreshResponseDto> {
     try {
       const payload = this.jwtService.verify<JwtPayload>(token);
 
       const user = await this.usersService.findById(payload.sub);
-
       if (!user) throw new UnauthorizedException();
 
       const savedTokens = await this.refreshRepo.find({
@@ -158,6 +158,7 @@ export class AuthService {
       for (const dbToken of savedTokens) {
         if (dbToken.revoked) continue;
         if (dbToken.expiresAt < new Date()) continue;
+
         const isValid = await bcrypt.compare(token, dbToken.tokenHash);
         if (isValid) {
           validToken = dbToken;
@@ -167,19 +168,19 @@ export class AuthService {
 
       if (!validToken) throw new UnauthorizedException();
 
-      if (validToken.expiresAt < new Date()) {
-        throw new UnauthorizedException();
-      }
-
       validToken.revoked = true;
       await this.refreshRepo.save(validToken);
 
       const tokens = await this.issueTokens(user);
-      return {
+
+      const response = {
         message: 'Token refreshed',
-        ...tokens,
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
         userId: user.id,
-      };
+      } satisfies RefreshResponseDto;
+
+      return response;
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }

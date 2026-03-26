@@ -39,7 +39,6 @@ export class FollowsController {
     return this.followsService.followUser(req.user.id, id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Unfollow a user' })
   @ApiResponse({
     status: 200,
@@ -61,7 +60,7 @@ export class FollowsController {
     description: 'Followers of a user',
     type: User,
   })
-  @Get('/users/:id/followers')
+  @Get('/followers/:id')
   async getFollowers(@Param('id') userId: string) {
     const follower = await this.followsService.getFollowers(userId);
     return { follower };
@@ -74,7 +73,7 @@ export class FollowsController {
     description: 'Following of a user',
     type: User,
   })
-  @Get('/users/:id/following')
+  @Get('/following/:id')
   async getFollowing(@Param('id') userId: string) {
     const following = await this.followsService.getFollowing(userId);
     return { following };

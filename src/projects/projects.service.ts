@@ -446,7 +446,7 @@ export class ProjectsService {
         }
       });
 
-      // match by role 
+      // match by role
       if (
         user.professionalRole &&
         project.description

@@ -27,22 +27,6 @@ export class UsersController {
     console.log('UsersController initialized', usersService);
   }
 
-  @Get()
-  @ApiOperation({ summary: 'Get public users list' })
-  @ApiResponse({ status: 200, description: 'Public users list' })
-  getPublicUsers(@Query() paginationQueryDto: PaginationQueryDto) {
-    return this.usersService.findPublic(paginationQueryDto);
-  }
-
-  @Get('admin')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
-  @ApiOperation({ summary: 'Get all users (Admin only)' })
-  @ApiResponse({ status: 200, description: 'List of all users' })
-  getAllUsers() {
-    return this.usersService.findAll();
-  }
-
   @UseGuards(JwtAuthGuard)
   @Get('me')
   @ApiOperation({ summary: 'Get user profile' })
@@ -51,18 +35,11 @@ export class UsersController {
     return req.user;
   }
 
-  @Patch('updateProfile')
+  @Patch('me')
   @ApiOperation({ summary: 'Update user profile' })
   @UseGuards(JwtAuthGuard)
   updateProfile(@Req() req: AuthRequest, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.updateProfile(req.user.id, updateUserDto);
-  }
-
-  @Get(':id')
-  @ApiOperation({ summary: 'Get user profile' })
-  @ApiResponse({ status: 200, description: 'User profile' })
-  getUser(@Param('id') id: string) {
-    return this.usersService.findById(id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -76,5 +53,28 @@ export class UsersController {
   @ApiOperation({ summary: 'Reactivate account' })
   reactivate(@Body() reactivateAccountDto: ReactivateAccountDto) {
     return this.usersService.reactivateAccount(reactivateAccountDto);
+  }
+
+  @Get('admin/all')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Get all users (Admin only)' })
+  @ApiResponse({ status: 200, description: 'List of all users' })
+  getAllUsers() {
+    return this.usersService.findAll();
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Get public users list' })
+  @ApiResponse({ status: 200, description: 'Public users list' })
+  getPublicUsers(@Query() paginationQueryDto: PaginationQueryDto) {
+    return this.usersService.findPublic(paginationQueryDto);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get user profile' })
+  @ApiResponse({ status: 200, description: 'User profile' })
+  getUser(@Param('id') id: string) {
+    return this.usersService.findById(id);
   }
 }
