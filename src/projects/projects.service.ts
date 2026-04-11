@@ -469,6 +469,7 @@ export class ProjectsService {
       id: project.id,
       title: project.title,
       description: project.description,
+      status: project.status,
       techStack: project.techStack,
       score: project.score,
       owner: {
